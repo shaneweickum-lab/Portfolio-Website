@@ -34,6 +34,17 @@ export function OpticalSender() {
 
   useEffect(() => stopLoop, [stopLoop]);
 
+  // Draws the calibration/alignment pattern whenever we're in "ready"
+  // phase. Deliberately not drawn inline in handleFile/stopTransmitting --
+  // canvasRef.current is still null there when entering "ready" from
+  // "idle", since the <canvas> only mounts once React commits the phase
+  // change, which hasn't happened yet in that same synchronous call.
+  useEffect(() => {
+    if (phase !== "ready") return;
+    const ctx = canvasRef.current?.getContext("2d");
+    if (ctx && canvasRef.current) renderCalibrationFrame(ctx, canvasRef.current.width);
+  }, [phase]);
+
   async function handleFile(file: File) {
     setError(null);
     try {
@@ -45,9 +56,6 @@ export function OpticalSender() {
       setFileInfo({ name: file.name, size: buffer.length, blockCount: encoder.blockCount });
       setStats({ symbolsSent: 0, currentLabel: "" });
       setPhase("ready");
-
-      const ctx = canvasRef.current?.getContext("2d");
-      if (ctx && canvasRef.current) renderCalibrationFrame(ctx, canvasRef.current.width);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Couldn't read that file.");
     }
@@ -95,8 +103,6 @@ export function OpticalSender() {
   function stopTransmitting() {
     stopLoop();
     setPhase("ready");
-    const ctx = canvasRef.current?.getContext("2d");
-    if (ctx && canvasRef.current) renderCalibrationFrame(ctx, canvasRef.current.width);
   }
 
   function reset() {
