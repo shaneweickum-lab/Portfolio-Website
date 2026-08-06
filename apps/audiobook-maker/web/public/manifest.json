@@ -1,7 +1,7 @@
 {
-  "name": "Narrate — Audiobook Maker",
+  "name": "Narrate — Read Aloud",
   "short_name": "Narrate",
-  "description": "Turn a manuscript into a narrated audiobook you can download as an MP3.",
+  "description": "Have a manuscript read aloud right in your browser, using your device's own voices. Works offline once installed.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0c0a09",

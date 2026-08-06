@@ -1,40 +1,35 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
-import { SUPPORTED_FORMATS, uploadDocument } from "@/lib/api";
+import { Reader } from "@/components/reader";
+import {
+  parseDocument,
+  SUPPORTED_EXTENSIONS,
+  type ParsedDocument,
+} from "@/lib/parse-document";
 
-function extensionOf(filename: string): string {
-  return filename.split(".").pop()?.toLowerCase() ?? "";
-}
-
-export default function UploadPage() {
-  const router = useRouter();
+export default function HomePage() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
+  const [parsing, setParsing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const acceptedExtensions = SUPPORTED_FORMATS.map((f) => f.extension);
+  const [doc, setDoc] = useState<ParsedDocument | null>(null);
 
   async function handleFile(file: File) {
-    const extension = extensionOf(file.name);
-    if (!acceptedExtensions.includes(extension)) {
-      setError(
-        `.${extension} isn't supported yet. Try: ${acceptedExtensions.map((e) => `.${e}`).join(", ")}`,
-      );
-      return;
-    }
-
     setError(null);
-    setSubmitting(true);
+    setParsing(true);
     try {
-      const job = await uploadDocument(file);
-      router.push(`/jobs/${job.id}`);
+      const parsed = await parseDocument(file);
+      setDoc(parsed);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Upload failed.");
-      setSubmitting(false);
+      setError(err instanceof Error ? err.message : "Couldn't read that file.");
+    } finally {
+      setParsing(false);
     }
+  }
+
+  if (doc) {
+    return <Reader doc={doc} onClose={() => setDoc(null)} />;
   }
 
   return (
@@ -43,10 +38,12 @@ export default function UploadPage() {
         Narrate
       </p>
       <h1 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">
-        Turn your manuscript into an audiobook
+        Have your manuscript read aloud
       </h1>
       <p className="mt-4 max-w-lg text-muted">
-        Upload a document and get back a narrated MP3, chapter pauses and all.
+        Upload a document and it&apos;s read back to you right in the
+        browser, using your device&apos;s own voices. Nothing leaves your
+        device.
       </p>
 
       <div
@@ -69,7 +66,7 @@ export default function UploadPage() {
         <input
           ref={inputRef}
           type="file"
-          accept={acceptedExtensions.map((e) => `.${e}`).join(",")}
+          accept={SUPPORTED_EXTENSIONS.map((e) => `.${e}`).join(",")}
           className="hidden"
           onChange={(e) => {
             const file = e.target.files?.[0];
@@ -77,10 +74,10 @@ export default function UploadPage() {
           }}
         />
         <p className="font-medium">
-          {submitting ? "Uploading…" : "Drop a file here, or click to browse"}
+          {parsing ? "Reading your file…" : "Drop a file here, or click to browse"}
         </p>
         <p className="text-sm text-muted">
-          {SUPPORTED_FORMATS.map((f) => f.label).join("  ·  ")}
+          {SUPPORTED_EXTENSIONS.map((e) => `.${e}`).join("  ·  ")}
         </p>
       </div>
 
@@ -91,7 +88,8 @@ export default function UploadPage() {
       )}
 
       <p className="mt-8 text-xs text-muted">
-        .docx support is here today and free while there&apos;s no paid plan yet.
+        Everything happens on-device — parsing and narration never touch a
+        server.
       </p>
     </div>
   );

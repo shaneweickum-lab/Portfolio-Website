@@ -14,9 +14,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Narrate — Audiobook Maker",
+  title: "Narrate — Read Aloud",
   description:
-    "Upload a manuscript and get back a narrated audiobook you can download as an MP3.",
+    "Upload a manuscript and have it read aloud right in your browser, using your device's own voices. Works offline once installed.",
   manifest: "/manifest.json",
 };
 
