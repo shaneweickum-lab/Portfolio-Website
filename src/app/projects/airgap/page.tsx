@@ -21,7 +21,7 @@ export default function AirgapPage() {
 
       <div className="mt-10 grid gap-4 sm:grid-cols-2">
         <Link
-          href="/airgap/sender"
+          href="/projects/airgap/sender"
           className="group flex flex-col items-start rounded-2xl border border-border bg-surface p-6 text-left transition-colors hover:border-signal/50"
         >
           <span className="font-mono text-xs uppercase tracking-[0.2em] text-signal">
@@ -34,7 +34,7 @@ export default function AirgapPage() {
         </Link>
 
         <Link
-          href="/airgap/receiver"
+          href="/projects/airgap/receiver"
           className="group flex flex-col items-start rounded-2xl border border-border bg-surface p-6 text-left transition-colors hover:border-signal/50"
         >
           <span className="font-mono text-xs uppercase tracking-[0.2em] text-signal">
