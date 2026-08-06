@@ -50,7 +50,8 @@ export function NarrateReader({
   }
 
   const usingKokoro = engine === "kokoro";
-  const modelBusy = usingKokoro && kokoro.modelState === "loading";
+  const modelDownloading = usingKokoro && kokoro.modelState === "loading";
+  const modelWarmingUp = usingKokoro && kokoro.modelState === "warming-up";
   const modelReady = usingKokoro && kokoro.modelState === "ready";
   const isPlaying = usingKokoro ? kokoro.status === "playing" : speech.status === "playing";
   const isBuffering = usingKokoro && kokoro.status === "buffering";
@@ -108,7 +109,7 @@ export function NarrateReader({
         </p>
       )}
 
-      {modelBusy && (
+      {modelDownloading && (
         <div className="mt-4">
           <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-muted">
             <div
@@ -119,6 +120,17 @@ export function NarrateReader({
           <p className="mt-2 text-center text-xs text-muted">
             Downloading the better voice model — {Math.round(kokoro.modelProgress * 100)}%.
             This only happens once.
+          </p>
+        </div>
+      )}
+      {modelWarmingUp && (
+        <div className="mt-4">
+          <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-muted">
+            <div className="h-full w-1/3 animate-pulse rounded-full bg-signal" />
+          </div>
+          <p className="mt-2 text-center text-xs text-muted">
+            Setting up the voice — this can take a little longer on the
+            first run.
           </p>
         </div>
       )}

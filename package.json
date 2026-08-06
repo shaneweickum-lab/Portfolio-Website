@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "node scripts/build-skills.mjs && next dev",
+    "build": "node scripts/build-skills.mjs && next build",
+    "build:skills": "node scripts/build-skills.mjs",
     "start": "next start",
     "lint": "eslint"
   },
@@ -28,6 +29,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "archiver": "^8.0.0",
     "eslint": "^9",
     "eslint-config-next": "16.3.0",
     "tailwindcss": "^4",

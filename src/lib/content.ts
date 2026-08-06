@@ -9,10 +9,12 @@ import type {
   CreativityItem,
   FrontmatterFor,
   Project,
+  Skill,
   World,
 } from "@/lib/types";
 
 const CONTENT_ROOT = path.join(process.cwd(), "content");
+const SKILLS_ZIP_ROOT = path.join(process.cwd(), "public", "skills");
 
 function readCategory<C extends ContentCategory>(
   category: C,
@@ -89,11 +91,38 @@ export function getBooksInWorld(worldSlug: string): Book[] {
   return getAllBooks().filter((book) => book.frontmatter.worldSlug === worldSlug);
 }
 
+function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return `${bytes} B`;
+  const kb = bytes / 1024;
+  if (kb < 1024) return `${kb.toFixed(kb < 10 ? 1 : 0)} KB`;
+  return `${(kb / 1024).toFixed(1)} MB`;
+}
+
+function withDownloadInfo(entry: ContentEntry<FrontmatterFor<"skills">>): Skill {
+  const zipPath = path.join(SKILLS_ZIP_ROOT, `${entry.slug}.zip`);
+  const exists = fs.existsSync(zipPath);
+  return {
+    ...entry,
+    downloadHref: `/skills/${entry.slug}.zip`,
+    fileSizeLabel: exists ? formatFileSize(fs.statSync(zipPath).size) : null,
+  };
+}
+
+export function getAllSkills(): Skill[] {
+  return readCategory("skills").map(withDownloadInfo);
+}
+
+export function getSkill(slug: string): Skill | undefined {
+  const entry = readOne("skills", slug);
+  return entry ? withDownloadInfo(entry) : undefined;
+}
+
 export function getFeatured() {
   return {
     projects: getAllProjects().filter((p) => p.frontmatter.featured),
     books: getAllBooks().filter((b) => b.frontmatter.featured),
     worlds: getAllWorlds().filter((w) => w.frontmatter.featured),
     creativity: getAllCreativity().filter((c) => c.frontmatter.featured),
+    skills: getAllSkills().filter((s) => s.frontmatter.featured),
   };
 }

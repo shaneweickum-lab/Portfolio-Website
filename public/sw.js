@@ -1,10 +1,11 @@
-const CACHE_NAME = "projects-shell-v1";
+const CACHE_NAME = "projects-shell-v2";
 const SHELL_ASSETS = [
   "/projects",
   "/projects/narrate",
   "/projects/airgap",
   "/projects/airgap/sender",
   "/projects/airgap/receiver",
+  "/projects/skills",
   "/manifest.json",
   "/icon-192.png",
   "/icon-512.png",

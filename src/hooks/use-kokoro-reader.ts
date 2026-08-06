@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { listKokoroVoices, loadKokoro, synthesize, type KokoroVoice } from "@/lib/kokoro-engine";
 
-export type KokoroModelState = "not-loaded" | "loading" | "ready" | "error";
+export type KokoroModelState = "not-loaded" | "loading" | "warming-up" | "ready" | "error";
 export type KokoroPlaybackStatus = "idle" | "buffering" | "playing" | "paused" | "finished" | "error";
 
 const KOKORO_VOICE_STORAGE_KEY = "narrate:kokoro-voice";
@@ -9,6 +9,23 @@ const DEFAULT_VOICE = "af_heart";
 const INITIAL_MS_PER_CHAR = 70;
 const MIN_ESTIMATE_MS = 400;
 const BUFFER_TICK_MS = 100;
+const SYNTHESIS_TIMEOUT_MS = 45_000;
+
+function withTimeout<T>(promise: Promise<T>, ms: number, message: string): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(message)), ms);
+    promise.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (err) => {
+        clearTimeout(timer);
+        reject(err);
+      },
+    );
+  });
+}
 
 type TTSInstance = Awaited<ReturnType<typeof loadKokoro>>;
 
@@ -59,27 +76,45 @@ export function useKokoroReader(paragraphs: string[]) {
   }, []);
 
   const enable = useCallback(() => {
-    if (modelState === "loading" || modelState === "ready") return;
+    if (modelState === "loading" || modelState === "warming-up" || modelState === "ready") return;
     setModelState("loading");
     setErrorMessage(null);
     loadKokoro((progress) => {
       if (progress.total > 0) setModelProgress(progress.loaded / progress.total);
     })
-      .then((tts) => {
+      .then(async (tts) => {
         ttsRef.current = tts;
         setVoices(listKokoroVoices(tts));
+        // The first generate() call for a voice also fetches that voice's
+        // style data separately from the model itself — do this now, while
+        // the UI is already showing a "getting ready" state, instead of
+        // silently on the first paragraph the user tries to play.
+        setModelState("warming-up");
+        await withTimeout(
+          synthesize(tts, "Ready.", voiceIdRef.current),
+          SYNTHESIS_TIMEOUT_MS,
+          "Setting up the voice timed out.",
+        );
         setModelState("ready");
       })
       .catch(() => {
         setModelState("error");
-        setErrorMessage("Couldn't load the better-voice model. Web Speech is still available.");
+        setErrorMessage(
+          ttsRef.current
+            ? "The voice model downloaded, but setting up the voice is taking too long on this device. Web Speech is still available."
+            : "Couldn't load the better-voice model. Web Speech is still available.",
+        );
       });
   }, [modelState]);
 
   const synthesizeUrl = useCallback(async (index: number): Promise<string> => {
     const tts = ttsRef.current;
     if (!tts) throw new Error("model not ready");
-    const blob = await synthesize(tts, paragraphs[index], voiceIdRef.current);
+    const blob = await withTimeout(
+      synthesize(tts, paragraphs[index], voiceIdRef.current),
+      SYNTHESIS_TIMEOUT_MS,
+      "Speech generation is taking far longer than expected — this device may be too slow for the better voice model. Try Device voice instead.",
+    );
     return URL.createObjectURL(blob);
   }, [paragraphs]);
 
@@ -149,8 +184,10 @@ export function useKokoroReader(paragraphs: string[]) {
           });
           getClip(index + 1).catch(() => {});
         })
-        .catch(() => {
-          setErrorMessage("Couldn't generate speech for that paragraph.");
+        .catch((err) => {
+          setErrorMessage(
+            err instanceof Error ? err.message : "Couldn't generate speech for that paragraph.",
+          );
           setStatus("error");
         });
     },
