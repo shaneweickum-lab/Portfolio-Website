@@ -1,0 +1,58 @@
+---
+title: "Autonomous Research Agent"
+summary: "A multi-step agent that plans, searches, reads, and synthesizes long-form research reports with citations."
+date: "2026-05-12"
+featured: true
+role: "Design & implementation"
+status: "shipped"
+stack: ["TypeScript", "Claude", "LangGraph", "Vercel", "Postgres"]
+tags: ["agents", "rag", "evals"]
+links:
+  - label: "Write-up"
+    href: "https://example.com/research-agent"
+metrics:
+  - label: "Avg. report time"
+    value: "4.2m"
+  - label: "Citation accuracy"
+    value: "94%"
+  - label: "Weekly active users"
+    value: "1.2k"
+---
+
+## The problem
+
+Most "AI research assistant" demos fall apart the moment you ask a question
+that requires more than one search. Real research is iterative: you search,
+skim, refine your question, search again, and only then start writing. I
+wanted an agent that actually worked that way instead of doing a single
+retrieval pass and hoping for the best.
+
+## Architecture
+
+The agent runs as a planning loop with four cooperating roles:
+
+- **Planner** — breaks the research question into sub-questions and decides
+  what's still missing after each round.
+- **Searcher** — issues targeted queries and de-duplicates sources across
+  rounds so the agent doesn't re-read the same page twice.
+- **Reader** — extracts claims and evidence from each source, tagged with
+  confidence and provenance.
+- **Writer** — assembles the final report once the planner is satisfied with
+  coverage, with inline citations traced back to source extracts.
+
+Each role is a distinct LLM call with its own tool access and system prompt,
+orchestrated with LangGraph so state and retries are explicit rather than
+buried in a single mega-prompt.
+
+## What made it hard
+
+Citation accuracy was the real fight. Early versions hallucinated plausible
+but wrong page numbers and quotes. The fix was forcing the Reader role to
+extract verbatim spans before any synthesis happens — the Writer is only
+ever allowed to cite text that exists, byte-for-byte, in an extracted span.
+
+## Where it's headed
+
+Next up: letting the planner request human clarification mid-run instead of
+guessing at ambiguous questions, and swapping in a smaller model for the
+Reader role now that extraction is a much narrower task than synthesis.

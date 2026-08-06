@@ -1,0 +1,41 @@
+---
+title: "Realtime Multi-Agent Orchestrator"
+summary: "Infrastructure for running many specialized agents concurrently against one task, with shared memory and conflict resolution."
+date: "2026-02-03"
+featured: true
+role: "Systems design"
+status: "in-progress"
+stack: ["TypeScript", "Redis", "WebSockets", "Claude", "Docker"]
+tags: ["orchestration", "tool-use", "infra"]
+---
+
+## Why one agent isn't always enough
+
+Some tasks parallelize naturally — reviewing a large diff across several
+dimensions, or fanning out research across independent sub-questions. The
+bottleneck isn't model quality, it's coordination: agents stepping on each
+other's work, duplicating effort, or finishing in an order the task didn't
+expect.
+
+## What it does
+
+The orchestrator schedules a fleet of agents against a shared task graph.
+Each agent claims a node, writes its result back to a shared store, and the
+graph resolves dependencies as results land — so an agent waiting on two
+upstream results starts the moment both are ready, not on a fixed schedule.
+
+Key pieces:
+
+- A task graph with explicit dependencies, so ordering is a property of the
+  data, not of when an agent happens to run.
+- A shared memory layer (Redis-backed) that lets agents read each other's
+  intermediate findings without re-deriving them.
+- Conflict resolution for the case where two agents produce contradictory
+  results — escalated to a lightweight judge pass rather than silently
+  picking one.
+
+## Status
+
+Still in progress. The scheduling core works; the part I'm actively
+iterating on is making the conflict-resolution judge cheap enough to run on
+every disagreement without becoming its own bottleneck.
