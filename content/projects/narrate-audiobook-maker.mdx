@@ -1,20 +1,21 @@
 ---
 title: "Narrate — Read Aloud"
-summary: "Upload a manuscript and have it read aloud right in your browser, using your device's own voices. A standalone, offline-capable PWA."
+summary: "Upload a manuscript and have it read aloud right in your browser, using your device's own voices."
 date: "2026-08-06"
 featured: true
 role: "Design & implementation"
 status: "in-progress"
-stack: ["Next.js", "Web Speech API", "mammoth.js", "marked", "PWA"]
+stack: ["Next.js", "Web Speech API", "mammoth.js", "marked"]
 tags: ["ai", "tts", "tools"]
+links:
+  - label: "Try Narrate"
+    href: "/narrate"
 ---
 
 ## What it is
 
 A focused tool for authors: drop in a manuscript, have it read back to
-you. It's deliberately its own standalone, installable PWA rather than a
-page bolted onto this site — a separate app with its own domain, so it can
-grow independently of the portfolio around it.
+you. It lives right here on this site at [/narrate](/narrate).
 
 ## How it works
 
@@ -26,18 +27,17 @@ Entirely client-side — nothing is uploaded anywhere:
 - **Narration** — the [Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API)
   reads each paragraph aloud using whatever voices are already installed on
   your device, with play/pause/skip controls and a voice picker.
-- Because there's no server in the loop at all, it's fully usable offline
-  once installed as a PWA.
 
-## The pivot from a Python backend
+## The path here
 
-This started as a FastAPI + Piper TTS + python-docx backend that rendered
-a downloadable MP3 — real, working code, still in git history. Getting it
-actually deployed (a persistent host, volumes, Docker) turned into its own
-project before the product itself could be tried. Device-native TTS trades
-away MP3 export (browsers don't expose synthesized speech as a capturable
-file) for zero backend, zero deploy, and zero cost — the right trade for
-proving out the core experience first.
+This started as a standalone FastAPI + Piper TTS + python-docx backend
+that rendered a downloadable MP3 — real, working code, still in git
+history. Getting it actually deployed (a persistent host, volumes, Docker)
+turned into its own project before the product itself could be tried, so
+it became a fully client-side Web Speech API tool instead — no backend to
+deploy at all. It was originally built as its own standalone installable
+PWA, then folded into this site as a page once that separation stopped
+paying for itself.
 
 ## Formats
 
@@ -47,5 +47,6 @@ convert cleanly to formats already supported.
 
 ## What's next
 
-PDF support, and possibly reviving the Piper-based backend later as an
-opt-in "export to MP3" feature once the in-browser experience is proven.
+PDF support, and possibly an opt-in "export to MP3" feature later,
+reviving the Piper-based backend for anyone who wants a downloadable file
+instead of in-browser playback.
