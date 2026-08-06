@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Download } from "lucide-react";
 import { Tag } from "@/components/tag";
-import type { Book, CreativityItem, Project, World } from "@/lib/types";
+import type { Book, CreativityItem, Project, Skill, World } from "@/lib/types";
 
 const STATUS_LABEL: Record<string, string> = {
   shipped: "Shipped",
@@ -87,6 +87,30 @@ export function WorldCard({ world }: { world: World }) {
             ))}
           </div>
         )}
+      </div>
+    </Link>
+  );
+}
+
+export function SkillCard({ skill }: { skill: Skill }) {
+  return (
+    <Link
+      href={`/projects/skills/${skill.slug}`}
+      className="group flex flex-col rounded-2xl border border-border bg-surface p-6 transition-colors hover:border-signal/50"
+    >
+      <div className="flex items-start justify-between gap-3">
+        <h3 className="text-lg font-semibold text-foreground">
+          {skill.frontmatter.title}
+        </h3>
+        <Download
+          size={18}
+          className="mt-1 shrink-0 text-muted transition-transform group-hover:-translate-y-0.5 group-hover:text-signal"
+        />
+      </div>
+      <p className="mt-2 text-sm text-muted">{skill.frontmatter.summary}</p>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <Tag accent="signal">v{skill.frontmatter.version}</Tag>
+        {skill.frontmatter.category && <Tag>{skill.frontmatter.category}</Tag>}
       </div>
     </Link>
   );

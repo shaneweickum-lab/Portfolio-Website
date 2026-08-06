@@ -1,4 +1,4 @@
-export type ContentCategory = "projects" | "books" | "worlds" | "creativity";
+export type ContentCategory = "projects" | "books" | "worlds" | "creativity" | "skills";
 
 export interface Link {
   label: string;
@@ -46,13 +46,21 @@ export interface CreativityFrontmatter extends BaseFrontmatter {
   medium: string;
 }
 
+export interface SkillFrontmatter extends BaseFrontmatter {
+  version: string;
+  category?: string;
+  compatibleWith?: string;
+}
+
 export type FrontmatterFor<C extends ContentCategory> = C extends "projects"
   ? ProjectFrontmatter
   : C extends "books"
     ? BookFrontmatter
     : C extends "worlds"
       ? WorldFrontmatter
-      : CreativityFrontmatter;
+      : C extends "creativity"
+        ? CreativityFrontmatter
+        : SkillFrontmatter;
 
 export interface ContentEntry<F> {
   slug: string;
@@ -65,3 +73,4 @@ export type Project = ContentEntry<ProjectFrontmatter>;
 export type Book = ContentEntry<BookFrontmatter>;
 export type World = ContentEntry<WorldFrontmatter>;
 export type CreativityItem = ContentEntry<CreativityFrontmatter>;
+export type Skill = ContentEntry<SkillFrontmatter> & { downloadHref: string; fileSizeLabel: string | null };
