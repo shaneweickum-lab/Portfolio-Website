@@ -1,0 +1,91 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #fbfaf8;
+  --surface: #ffffff;
+  --surface-muted: #f2f0eb;
+  --foreground: #14130f;
+  --muted: #6b665c;
+  --border: #e4e0d8;
+
+  --accent-signal: #0e7490; /* engineering / projects: cyan */
+  --accent-ember: #b45309; /* creative / books & worlds: amber */
+  --accent-wonder: #6d28d9; /* creativity: violet */
+
+  --font-serif: "Fraunces", "Iowan Old Style", serif;
+}
+
+.dark {
+  --background: #0a0a0c;
+  --surface: #131316;
+  --surface-muted: #1a1a1f;
+  --foreground: #f2f1ec;
+  --muted: #96938a;
+  --border: #2a2a30;
+
+  --accent-signal: #38bdf8;
+  --accent-ember: #f0a35c;
+  --accent-wonder: #a78bfa;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-signal: var(--accent-signal);
+  --color-ember: var(--accent-ember);
+  --color-wonder: var(--accent-wonder);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-fraunces);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+::selection {
+  background: var(--accent-signal);
+  color: #06131a;
+}
+
+.prose {
+  --tw-prose-body: var(--foreground);
+  --tw-prose-headings: var(--foreground);
+  --tw-prose-links: var(--accent-ember);
+  --tw-prose-bold: var(--foreground);
+  --tw-prose-bullets: var(--muted);
+  --tw-prose-quotes: var(--foreground);
+  --tw-prose-quote-borders: var(--accent-ember);
+  --tw-prose-hr: var(--border);
+  --tw-prose-code: var(--foreground);
+  --tw-prose-pre-bg: var(--surface-muted);
+  --tw-prose-th-borders: var(--border);
+  --tw-prose-td-borders: var(--border);
+}
+
+@keyframes drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-2%, -2%, 0);
+  }
+}
+
+.bg-noise {
+  background-image: radial-gradient(
+      circle at 1px 1px,
+      color-mix(in srgb, var(--foreground) 6%, transparent) 1px,
+      transparent 0
+    );
+  background-size: 22px 22px;
+}
