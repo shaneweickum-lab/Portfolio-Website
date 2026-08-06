@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { listKokoroVoices, loadKokoro, synthesize, type KokoroVoice } from "@/lib/kokoro-engine";
 
-export type KokoroModelState = "not-loaded" | "loading" | "ready" | "error";
+export type KokoroModelState = "not-loaded" | "loading" | "warming-up" | "ready" | "error";
 export type KokoroPlaybackStatus = "idle" | "buffering" | "playing" | "paused" | "finished" | "error";
 
 const KOKORO_VOICE_STORAGE_KEY = "narrate:kokoro-voice";
@@ -76,20 +76,34 @@ export function useKokoroReader(paragraphs: string[]) {
   }, []);
 
   const enable = useCallback(() => {
-    if (modelState === "loading" || modelState === "ready") return;
+    if (modelState === "loading" || modelState === "warming-up" || modelState === "ready") return;
     setModelState("loading");
     setErrorMessage(null);
     loadKokoro((progress) => {
       if (progress.total > 0) setModelProgress(progress.loaded / progress.total);
     })
-      .then((tts) => {
+      .then(async (tts) => {
         ttsRef.current = tts;
         setVoices(listKokoroVoices(tts));
+        // The first generate() call for a voice also fetches that voice's
+        // style data separately from the model itself — do this now, while
+        // the UI is already showing a "getting ready" state, instead of
+        // silently on the first paragraph the user tries to play.
+        setModelState("warming-up");
+        await withTimeout(
+          synthesize(tts, "Ready.", voiceIdRef.current),
+          SYNTHESIS_TIMEOUT_MS,
+          "Setting up the voice timed out.",
+        );
         setModelState("ready");
       })
       .catch(() => {
         setModelState("error");
-        setErrorMessage("Couldn't load the better-voice model. Web Speech is still available.");
+        setErrorMessage(
+          ttsRef.current
+            ? "The voice model downloaded, but setting up the voice is taking too long on this device. Web Speech is still available."
+            : "Couldn't load the better-voice model. Web Speech is still available.",
+        );
       });
   }, [modelState]);
 
