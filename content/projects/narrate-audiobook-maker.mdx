@@ -1,0 +1,42 @@
+---
+title: "Narrate — Audiobook Maker"
+summary: "Upload a manuscript, get back a narrated MP3. A standalone PWA built with Piper TTS and python-docx."
+date: "2026-08-06"
+featured: true
+role: "Design & implementation"
+status: "in-progress"
+stack: ["Python", "FastAPI", "Piper TTS", "python-docx", "Next.js", "PWA"]
+tags: ["ai", "tts", "tools"]
+---
+
+## What it is
+
+A focused tool for authors: drop in a manuscript, get back a narrated
+audiobook-style MP3. It's deliberately its own standalone, installable PWA
+rather than a page bolted onto this site — a separate app with its own
+domain, so it can grow independently of the portfolio around it.
+
+## How it works
+
+- **Frontend** — a small Next.js PWA: drag-and-drop upload, a live progress
+  view while the document is narrated, then an inline player and MP3
+  download.
+- **Backend** — a Python FastAPI service that parses the document, runs it
+  through [Piper](https://github.com/OHF-voice/piper1-gpl) (a fast, local
+  neural TTS engine) paragraph by paragraph with natural pauses between
+  them, and encodes the result to MP3.
+- Conversion runs as an async background job with status polling, since a
+  full manuscript can take real time to narrate — not something you want to
+  hold a request open for.
+
+## Formats
+
+Free today (no paywall exists yet, but the format gating is already wired
+in for later): **.txt** and **.md**. Also supported right now: **.docx**,
+via `python-docx` — currently free as well, and slated to move behind a
+paid tier once one exists.
+
+## What's next
+
+PDF support (straightforward to add), a real paid tier, and possibly more
+Piper voices to choose from.
