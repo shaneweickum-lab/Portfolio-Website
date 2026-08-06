@@ -9,6 +9,23 @@ const DEFAULT_VOICE = "af_heart";
 const INITIAL_MS_PER_CHAR = 70;
 const MIN_ESTIMATE_MS = 400;
 const BUFFER_TICK_MS = 100;
+const SYNTHESIS_TIMEOUT_MS = 45_000;
+
+function withTimeout<T>(promise: Promise<T>, ms: number, message: string): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(message)), ms);
+    promise.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (err) => {
+        clearTimeout(timer);
+        reject(err);
+      },
+    );
+  });
+}
 
 type TTSInstance = Awaited<ReturnType<typeof loadKokoro>>;
 
@@ -79,7 +96,11 @@ export function useKokoroReader(paragraphs: string[]) {
   const synthesizeUrl = useCallback(async (index: number): Promise<string> => {
     const tts = ttsRef.current;
     if (!tts) throw new Error("model not ready");
-    const blob = await synthesize(tts, paragraphs[index], voiceIdRef.current);
+    const blob = await withTimeout(
+      synthesize(tts, paragraphs[index], voiceIdRef.current),
+      SYNTHESIS_TIMEOUT_MS,
+      "Speech generation is taking far longer than expected — this device may be too slow for the better voice model. Try Device voice instead.",
+    );
     return URL.createObjectURL(blob);
   }, [paragraphs]);
 
@@ -149,8 +170,10 @@ export function useKokoroReader(paragraphs: string[]) {
           });
           getClip(index + 1).catch(() => {});
         })
-        .catch(() => {
-          setErrorMessage("Couldn't generate speech for that paragraph.");
+        .catch((err) => {
+          setErrorMessage(
+            err instanceof Error ? err.message : "Couldn't generate speech for that paragraph.",
+          );
           setStatus("error");
         });
     },
