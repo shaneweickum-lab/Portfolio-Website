@@ -1,0 +1,80 @@
+---
+title: "Airgap — Optical Data Transfer"
+summary: "Send a file between two devices with no network at all — a color-flicker pattern on one screen, read by another device's camera."
+date: "2026-08-06"
+featured: true
+role: "Design & implementation"
+status: "in-progress"
+stack: ["Next.js", "Canvas API", "getUserMedia", "Fountain codes", "Linear algebra"]
+tags: ["signal-processing", "systems", "computer-vision"]
+links:
+  - label: "Send a file"
+    href: "/airgap/sender"
+  - label: "Receive a file"
+    href: "/airgap/receiver"
+---
+
+## What it is
+
+Two devices, zero network. One device (the sender) flickers a grid of
+colors on its screen; another device (the receiver) points a camera at
+that screen and reconstructs the original file — no Bluetooth, no Wi-Fi,
+no pairing. Purely light.
+
+## Why this is hard
+
+Consumer cameras and screens aren't built to talk to each other. The
+camera's clock and the screen's refresh are completely unsynchronized;
+auto-exposure and auto-white-balance actively fight against stable color
+classification; and there's no return channel at all — the sender has no
+idea whether anything it's showing is actually being received. Every part
+of this project exists to solve one piece of that problem:
+
+- **Framing & geometry** — the sender's screen is divided into an 8x8
+  grid of colored cells plus four corner fiducial markers. The receiver
+  locates those markers in its camera frame and solves an exact 4-point
+  homography (a hand-rolled linear solve, not a least-squares
+  approximation) to correct for the camera not being perfectly
+  perpendicular to the screen. A fifth marker, deliberately excluded from
+  the homography solve, exists purely to cross-check it — if the solved
+  transform doesn't correctly predict where that marker actually is, the
+  frame is thrown out rather than trusted.
+- **Color robustness** — auto-exposure and white-balance drift over the
+  course of a transfer, so the receiver doesn't trust fixed color targets.
+  Fixed reference swatches on screen are re-sampled every frame and used
+  to calibrate what "each palette color actually looks like right now"
+  before classifying anything else.
+- **No return channel, so no retransmission** — reliability comes from a
+  rateless erasure code (a GF(2) linear fountain code) instead. The file
+  is split into blocks; the sender loops through them and then keeps
+  generating random linear combinations indefinitely. The receiver
+  accumulates whatever it manages to capture — order doesn't matter, and
+  neither does the exact set of drops — and solves for the original file
+  with incremental Gauss-Jordan elimination the moment it has enough
+  independent equations. A block can be fully recovered mid-transfer, long
+  before the whole file is done.
+- **Debounce over trust** — a single camera frame captured mid-transition
+  between two symbols is a real failure mode (rolling shutter, timing
+  jitter). Rather than trust any single frame, the receiver requires two
+  consecutive frames to decode to *identical* content before accepting a
+  symbol at all.
+
+## Current scope
+
+Optical only, for now — the same core pipeline (fountain code, framing,
+one-way broadcast) is designed to extend to an ultrasound channel
+(speaker → microphone) later, without redesigning the erasure coding
+layer. Realistic throughput is small-file territory (text, keys, small
+images) — that's a property of the physical channel, not a shortcoming of
+the approach.
+
+## Honest limitation
+
+This was built and verified with synthetic and rendered-frame tests
+(a full round-trip through real camera-frame rendering, including
+realistic perspective distortion), but not against a real camera and
+screen in an uncontrolled room. Real-world lighting, hand tremor, and
+actual webcam auto-exposure behavior are the biggest open risk — the
+receiver's live diagnostics (markers found, alignment status, reprojection
+error) exist specifically to make that failure mode visible rather than
+silent.
