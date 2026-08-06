@@ -14,6 +14,27 @@ links:
     href: "/airgap/receiver"
 ---
 
+## Why I built this
+
+I wanted a project that couldn't be mistaken for a tutorial. Most
+portfolio projects are variations on the same handful of shapes — a CRUD
+app, a dashboard, a chatbot wrapper. I went looking for a problem
+unconventional enough that solving it well would say something about how
+I think, not just what frameworks I know: air-gapped file transfer,
+using nothing but a screen and a camera, with no network at all.
+
+The technique itself isn't new — optical and acoustic data-over-air
+techniques go back decades in research and niche commercial products.
+The point was never to invent the concept. It was to pick a real,
+nontrivial systems problem, architect a correct solution to it myself,
+and execute that architecture to a standard I'd actually stand behind —
+using Claude Code as my implementation partner throughout, the same way
+I'd use any serious engineering tool. I made the calls on the erasure
+coding strategy, the homography approach, and what "verified" had to
+mean before I'd call any of it done; Claude Code did a lot of the
+typing, and pushed back or caught bugs often enough that it earned the
+trust to keep doing more of it.
+
 ## What it is
 
 Two devices, zero network. One device (the sender) flickers a grid of
