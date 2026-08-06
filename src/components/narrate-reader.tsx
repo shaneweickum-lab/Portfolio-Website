@@ -131,8 +131,19 @@ export function NarrateReader({
       </div>
       <p className="mt-2 text-xs text-muted">
         Paragraph {displayIndex + 1} of {doc.paragraphs.length}
-        {isBuffering && " · generating audio…"}
       </p>
+
+      {isBuffering && (
+        <div className="mt-3">
+          <div className="h-1 w-full overflow-hidden rounded-full bg-surface-muted">
+            <div
+              className="h-full rounded-full bg-signal/70 transition-all duration-150 ease-linear"
+              style={{ width: `${Math.round(kokoro.bufferProgress * 100)}%` }}
+            />
+          </div>
+          <p className="mt-1.5 text-center text-xs text-muted">Generating audio…</p>
+        </div>
+      )}
 
       <div className="mt-8 flex min-h-64 items-center justify-center rounded-2xl border border-border bg-surface p-8">
         <p className="text-center text-xl leading-relaxed text-foreground">

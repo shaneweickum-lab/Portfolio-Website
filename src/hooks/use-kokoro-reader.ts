@@ -6,6 +6,9 @@ export type KokoroPlaybackStatus = "idle" | "buffering" | "playing" | "paused" |
 
 const KOKORO_VOICE_STORAGE_KEY = "narrate:kokoro-voice";
 const DEFAULT_VOICE = "af_heart";
+const INITIAL_MS_PER_CHAR = 70;
+const MIN_ESTIMATE_MS = 400;
+const BUFFER_TICK_MS = 100;
 
 type TTSInstance = Awaited<ReturnType<typeof loadKokoro>>;
 
@@ -20,6 +23,7 @@ export function useKokoroReader(paragraphs: string[]) {
     return localStorage.getItem(KOKORO_VOICE_STORAGE_KEY) ?? DEFAULT_VOICE;
   });
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [bufferProgress, setBufferProgress] = useState(0);
 
   const ttsRef = useRef<TTSInstance | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -28,6 +32,8 @@ export function useKokoroReader(paragraphs: string[]) {
   const statusRef = useRef<KokoroPlaybackStatus>("idle");
   const voiceIdRef = useRef(voiceId);
   const playFromRef = useRef<(index: number) => void>(() => {});
+  const msPerCharRef = useRef(INITIAL_MS_PER_CHAR);
+  const bufferTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     currentIndexRef.current = currentIndex;
@@ -48,6 +54,7 @@ export function useKokoroReader(paragraphs: string[]) {
       audioRef.current?.pause();
       cache.forEach((url) => URL.revokeObjectURL(url));
       cache.clear();
+      if (bufferTimerRef.current) clearInterval(bufferTimerRef.current);
     };
   }, []);
 
@@ -69,16 +76,43 @@ export function useKokoroReader(paragraphs: string[]) {
       });
   }, [modelState]);
 
-  const getClip = useCallback(async (index: number): Promise<string | null> => {
+  const synthesizeUrl = useCallback(async (index: number): Promise<string> => {
     const tts = ttsRef.current;
-    if (!tts || index < 0 || index >= paragraphs.length) return null;
+    if (!tts) throw new Error("model not ready");
+    const blob = await synthesize(tts, paragraphs[index], voiceIdRef.current);
+    return URL.createObjectURL(blob);
+  }, [paragraphs]);
+
+  const synthesizeUrlTracked = useCallback(async (index: number): Promise<string> => {
+    const text = paragraphs[index];
+    const estimateMs = Math.max(MIN_ESTIMATE_MS, text.length * msPerCharRef.current);
+    const start = performance.now();
+    setBufferProgress(0);
+    bufferTimerRef.current = setInterval(() => {
+      setBufferProgress(Math.min(0.95, (performance.now() - start) / estimateMs));
+    }, BUFFER_TICK_MS);
+
+    try {
+      const url = await synthesizeUrl(index);
+      const actualMs = performance.now() - start;
+      if (text.length > 20) {
+        msPerCharRef.current = msPerCharRef.current * 0.6 + (actualMs / text.length) * 0.4;
+      }
+      setBufferProgress(1);
+      return url;
+    } finally {
+      if (bufferTimerRef.current) clearInterval(bufferTimerRef.current);
+    }
+  }, [paragraphs, synthesizeUrl]);
+
+  const getClip = useCallback(async (index: number, trackProgress = false): Promise<string | null> => {
+    if (!ttsRef.current || index < 0 || index >= paragraphs.length) return null;
     const cached = clipCache.current.get(index);
     if (cached) return cached;
-    const blob = await synthesize(tts, paragraphs[index], voiceIdRef.current);
-    const url = URL.createObjectURL(blob);
+    const url = trackProgress ? await synthesizeUrlTracked(index) : await synthesizeUrl(index);
     clipCache.current.set(index, url);
     return url;
-  }, [paragraphs]);
+  }, [paragraphs.length, synthesizeUrl, synthesizeUrlTracked]);
 
   const playFrom = useCallback(
     (index: number) => {
@@ -92,8 +126,9 @@ export function useKokoroReader(paragraphs: string[]) {
 
       setCurrentIndex(index);
       setStatus("buffering");
+      setBufferProgress(0);
 
-      getClip(index)
+      getClip(index, true)
         .then((url) => {
           if (!url || statusRef.current !== "buffering" || currentIndexRef.current !== index) return;
           audio.src = url;
@@ -171,6 +206,7 @@ export function useKokoroReader(paragraphs: string[]) {
     voices,
     voiceId,
     errorMessage,
+    bufferProgress,
     progress: paragraphs.length ? currentIndex / paragraphs.length : 0,
     enable,
     play,
