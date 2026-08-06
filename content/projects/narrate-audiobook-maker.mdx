@@ -1,11 +1,11 @@
 ---
 title: "Narrate — Read Aloud"
-summary: "Upload a manuscript and have it read aloud right in your browser, using your device's own voices."
+summary: "Upload a manuscript and have it read aloud right in your browser — a proofreading tool that also runs a genuinely natural neural voice, no server or paid API involved."
 date: "2026-08-06"
 featured: true
 role: "Design & implementation"
 status: "in-progress"
-stack: ["Next.js", "Web Speech API", "mammoth.js", "marked"]
+stack: ["Next.js", "Web Speech API", "Kokoro-82M", "kokoro-js", "mammoth.js", "marked"]
 tags: ["ai", "tts", "tools"]
 links:
   - label: "Try Narrate"
@@ -14,8 +14,10 @@ links:
 
 ## What it is
 
-A focused tool for authors: drop in a manuscript, have it read back to
-you. It lives right here on this site at
+A tool I built for myself first: drop in a manuscript, have it read back
+to you. Listening to your own writing catches things your eyes skim past
+— awkward rhythm, repeated words, sentences that don't actually say what
+you meant. It lives right here on this site at
 [/projects/narrate](/projects/narrate).
 
 ## How it works
@@ -25,9 +27,19 @@ Entirely client-side — nothing is uploaded anywhere:
 - **Parsing** — `.txt` read directly, `.md` parsed with `marked`'s lexer
   (code blocks skipped), `.docx` parsed with `mammoth.js`. All in the
   browser.
-- **Narration** — the [Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API)
-  reads each paragraph aloud using whatever voices are already installed on
-  your device, with play/pause/skip controls and a voice picker.
+- **Narration, two ways**:
+  - **Device voice** — the [Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API)
+    reads each paragraph aloud instantly, using whatever voices are already
+    installed on your device.
+  - **Better voice** — an opt-in upgrade to [Kokoro-82M](https://huggingface.co/onnx-community/Kokoro-82M-v1.0-ONNX),
+    an Apache-2.0, 82-million-parameter neural TTS model that runs 100%
+    locally via [`kokoro-js`](https://www.npmjs.com/package/kokoro-js)
+    (Transformers.js + ONNX Runtime Web/WASM) — no server, no per-request
+    API cost. It's a one-time model download, cached in the browser
+    afterward, with a live progress readout and a graceful fallback to the
+    device voice if the download can't complete.
+- Both engines share the same play/pause/skip-by-paragraph transport, which
+  is what makes this useful for proofreading rather than just playback.
 
 ## The path here
 
@@ -38,7 +50,9 @@ turned into its own project before the product itself could be tried, so
 it became a fully client-side Web Speech API tool instead — no backend to
 deploy at all. It was originally built as its own standalone installable
 PWA, then folded into this site as a page once that separation stopped
-paying for itself.
+paying for itself. The neural-voice upgrade came from asking a follow-up
+question honestly: is there something better than the Web Speech API that
+still keeps the "no server, no paid API" constraint? Kokoro answered yes.
 
 ## Formats
 
