@@ -83,17 +83,27 @@ export default async function ProjectPage({ params }: { params: Params }) {
 
       {frontmatter.links && frontmatter.links.length > 0 && (
         <div className="mt-8 flex flex-wrap gap-3">
-          {frontmatter.links.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-full border border-border px-4 py-2 text-sm text-foreground hover:border-signal/60 hover:text-signal"
-            >
-              {link.label} <ArrowUpRight size={14} />
-            </a>
-          ))}
+          {frontmatter.links.map((link) => {
+            const isInternal = link.href.startsWith("/");
+            const linkClassName =
+              "inline-flex items-center gap-1.5 rounded-full border border-border px-4 py-2 text-sm text-foreground hover:border-signal/60 hover:text-signal";
+
+            return isInternal ? (
+              <Link key={link.href} href={link.href} className={linkClassName}>
+                {link.label} <ArrowUpRight size={14} />
+              </Link>
+            ) : (
+              <a
+                key={link.href}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={linkClassName}
+              >
+                {link.label} <ArrowUpRight size={14} />
+              </a>
+            );
+          })}
         </div>
       )}
 
