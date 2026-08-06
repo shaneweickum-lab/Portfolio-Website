@@ -70,11 +70,14 @@ the approach.
 
 ## Honest limitation
 
-This was built and verified with synthetic and rendered-frame tests
-(a full round-trip through real camera-frame rendering, including
-realistic perspective distortion), but not against a real camera and
-screen in an uncontrolled room. Real-world lighting, hand tremor, and
-actual webcam auto-exposure behavior are the biggest open risk — the
-receiver's live diagnostics (markers found, alignment status, reprojection
-error) exist specifically to make that failure mode visible rather than
-silent.
+The full pipeline — real file upload, real canvas rendering, real
+browser pixel capture, real fiducial detection, homography, color
+classification, debounce, CRC, and fountain decode — has been verified
+end-to-end in an actual browser, reconstructing files exactly, including
+a case recovered entirely from repair symbols with zero systematic
+symbols captured. What hasn't been verified yet is a real camera and a
+real screen in an uncontrolled room: actual lighting, hand tremor, and
+real webcam auto-exposure behavior are the remaining open risk. The
+receiver's live diagnostics (markers found, alignment status,
+reprojection error) exist specifically to make that failure mode visible
+rather than silent, whenever it's tried on real hardware.
