@@ -7,7 +7,7 @@ import { getAllSkills } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Claude Skills",
-  description: "Claude Skills built for real writing and worldbuilding workflows, free to download.",
+  description: "Claude Skills built to solve real problems in my own writing and research workflow, free to download.",
 };
 
 export default function SkillsPage() {
@@ -26,7 +26,7 @@ export default function SkillsPage() {
         <SectionHeader
           kicker="Claude Skills"
           title="Skills"
-          description="Small, focused Claude Skills built to solve real problems in my own writing and worldbuilding workflow — free to download and adapt."
+          description="Small, focused Claude Skills built to solve real problems in my own writing and research workflow — free to download and adapt."
           accent="signal"
         />
       </div>
