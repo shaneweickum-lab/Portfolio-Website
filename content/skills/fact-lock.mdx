@@ -1,0 +1,87 @@
+---
+title: "Fact Lock"
+summary: "Enforces citation discipline for non-fiction, research, and fact-dependent writing — no invented statistics, no fabricated citations, no gap quietly filled in with something plausible."
+date: "2026-08-07"
+featured: true
+version: "1.0.0"
+category: "Research & Non-Fiction"
+compatibleWith: "Claude, Claude Code"
+tags: ["claude-skill", "research", "citations", "editing"]
+---
+
+## The problem
+
+The most dangerous failure mode in AI-assisted factual writing isn't
+obvious errors — it's confident, fluent, entirely fabricated specifics: a
+statistic that sounds exactly right, a quote attributed to someone who
+never said it, a citation to a study that doesn't exist. Fluency reads as
+authority, but fluency is not evidence.
+
+This is the mirror image of [Fiction World Bible](/projects/skills/fiction-world-bible).
+In fiction, canon is something the author builds and Claude enforces
+alongside them. Here, the "canon" is the real world — the job is
+representing it honestly rather than filling gaps with invention.
+
+## What it does
+
+Before producing content for a new project, the skill runs a setup
+interview: what's being written, what source material already exists, how
+sourcing should work, what citation style to use, and what happens when
+something needed isn't actually covered by any available source.
+
+The default sourcing mode is **hybrid**: your own provided material —
+uploaded documents, a defined reading list, whatever corpus you bring — is
+treated as the primary authority. Web search fills gaps that material
+doesn't cover, and anything found that way gets flagged explicitly as
+externally verified, never blended in as if it came from your own
+sources.
+
+From there, every piece of content follows the same rules:
+
+- **No specific fact without a real, checkable source.** Statistics,
+  dates, quotes, study findings, names — all of it needs a citation, every
+  time.
+- **No fabricated citations, ever.** If a source can't be found, the
+  claim doesn't go in. A missing fact is always better than an invented
+  one.
+- **Three tiers, kept visibly separate:** what your own material directly
+  states, what web search found to fill a gap (flagged as such), and
+  Claude's own interpretation connecting sources (labeled as analysis,
+  never presented with the confidence of a direct citation).
+- **A live source registry** tracks every source actually used and what
+  specific claims depend on it — an audit trail you or anyone else could
+  use to verify the finished content claim by claim.
+- **Gaps get flagged, not filled.** If something the content needs isn't
+  in your material and isn't reliably verifiable, you hear about it
+  directly rather than getting something plausible-sounding instead.
+
+## Use cases
+
+- **A non-fiction author working from a defined set of sources** — every
+  chapter checked against a running registry showing exactly which claims
+  come from where.
+- **An educator building curriculum content** — every factual claim
+  treated the same regardless of how confident it sounds.
+- **A software team shipping domain-accurate content** — health, legal,
+  financial, or scientific claims embedded in a product get tightened
+  discipline, not relaxed, with a recommended human-expert review pass
+  before anything ships.
+- **A researcher synthesizing across sources** — connections stay clearly
+  separate from directly cited fact, so it's always obvious what's
+  established versus your own interpretation still needing review.
+
+## What it won't do
+
+It won't invent sources to make thin research look complete, and it won't
+relax its citation standard because a deadline is close or a section feels
+short. A shorter, fully-sourced piece of writing is always the right
+tradeoff against a longer one padded with unverified claims. It also
+won't decide what's true on its own — your provided material and
+verifiable outside sources do that.
+
+## Try it
+
+Tell Claude you're writing non-fiction, a research report, educational
+material, or fact-based content for a product, and it'll run the setup
+interview automatically. Download the skill below and add it to Claude or
+Claude Code.
