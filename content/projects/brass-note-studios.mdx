@@ -1,0 +1,60 @@
+---
+title: "Brass Note Studios"
+summary: "A commissioned-songwriting studio, live in production — with a hand-built chatbot and an automated feedback loop that files, and then implements, its own fixes."
+date: "2026-08-07"
+featured: true
+role: "Design & implementation"
+stack: ["Next.js", "TypeScript", "Tailwind CSS", "Upstash Redis", "Claude Haiku", "GitHub Actions"]
+status: "shipped"
+tags: ["fullstack", "automation", "chatbot"]
+links:
+  - label: "Visit Brass Note Studios"
+    href: "https://brassnotestudios.com"
+---
+
+## What it is
+
+A custom songwriting and production atelier. Clients commission bespoke
+songs for anniversaries, milestones, organizations, and content
+creation. Songs are written and produced with Suno AI, and that's stated
+plainly on the site's own About page rather than left implicit — the
+studio's value is in the direction, the lyrics, and the production
+judgment, not in hiding how the audio gets made.
+
+## The interesting engineering
+
+The site itself is a normal, well-built Next.js app — commission
+inquiry flow, a filterable music portfolio with a persistent audio
+player, a blog. What makes it worth a case study is what happens after
+a visitor asks the site's chatbot something it doesn't know how to
+answer:
+
+- **Benny, the site's concierge, is a hand-built AIML 2.0 engine** — no
+  AIML library, a from-scratch TypeScript pattern-matcher with SRAI
+  redirect resolution (bounded to depth 8 against infinite loops), a
+  contraction/synonym normalizer that widens pattern coverage without
+  duplicating rules, and a guided multi-step flow for walking a visitor
+  through a commission inquiry.
+- **Unanswered questions don't just vanish.** Every fallback gets logged
+  to Redis. A Vercel Cron job fires every 48 hours, hands the accumulated
+  fallbacks to Claude Haiku, and — if there's a real pattern worth
+  fixing — opens a GitHub Issue containing the actual proposed AIML fix,
+  labeled for review.
+- **A human still approves every change.** Adding an `approved` label to
+  that issue is what triggers a GitHub Action that installs the Claude
+  Code CLI, has it implement the fix directly against the AIML pattern
+  files, commit, push, and close the issue — live on the site roughly 90
+  seconds later via Vercel's auto-deploy. Nothing ships without that
+  explicit label.
+
+The result is a chatbot that gets measurably better at answering real
+visitor questions over time, with a tight, auditable human-in-the-loop
+gate between "here's a proposed fix" and "this is now live."
+
+## Why this shape
+
+I didn't want a support chatbot that either hallucinates answers or
+quietly plateaus the day it ships. The feedback loop is the actual
+product decision here: real usage data becomes a concrete, reviewable
+change proposal instead of either an ignored log file or an
+unsupervised auto-patch.
