@@ -10,6 +10,8 @@
  * reduces to weight 1, without waiting for the whole transfer to finish.
  */
 
+import { mulberry32 } from "./prng";
+
 export const FRAME_BYTES = 16;
 
 const TYPE_METADATA = 0x01;
@@ -97,19 +99,6 @@ export function decodeFrame(bytes: Uint8Array): DecodedFrame | null {
   }
 
   return null;
-}
-
-// --- Deterministic PRNG (mulberry32) ---
-
-function mulberry32(seed: number): () => number {
-  let state = seed >>> 0;
-  return () => {
-    state = (state + 0x6d2b79f5) >>> 0;
-    let t = state;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
 }
 
 const REPAIR_MASK_SEED = 0x9e3779b9;
