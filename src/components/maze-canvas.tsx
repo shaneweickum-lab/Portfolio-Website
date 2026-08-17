@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { cellIndex, NORTH, SOUTH, EAST, WEST, type Maze } from "@/lib/maze-generator";
 import type { Cell } from "@/lib/maze-solvers";
+import { useIsDarkMode } from "@/hooks/use-is-dark-mode";
 
 const CANVAS_PX = 640;
 
@@ -27,6 +28,7 @@ function readCssColor(varName: string, fallback: string): string {
 
 export function MazeCanvas({ maze, start, goal, mouse, revealed, trail, path, onCellClick, pickingActive }: MazeCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const isDarkMode = useIsDarkMode();
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -43,7 +45,7 @@ export function MazeCanvas({ maze, start, goal, mouse, revealed, trail, path, on
 
     const surface = readCssColor("--color-surface", "#151515");
     const surfaceMuted = readCssColor("--color-surface-muted", "#1f1f1f");
-    const border = readCssColor("--color-border", "#333");
+    const wallColor = readCssColor("--color-foreground", "#000000");
     const signal = readCssColor("--color-signal", "#22d3ee");
     const ember = readCssColor("--color-ember", "#f59e0b");
 
@@ -79,7 +81,7 @@ export function MazeCanvas({ maze, start, goal, mouse, revealed, trail, path, on
     }
 
     // Walls.
-    ctx.strokeStyle = border;
+    ctx.strokeStyle = wallColor;
     ctx.lineWidth = Math.max(1.5, cellPx * 0.06);
     ctx.lineCap = "square";
     for (let y = 0; y < maze.height; y++) {
@@ -111,7 +113,7 @@ export function MazeCanvas({ maze, start, goal, mouse, revealed, trail, path, on
     }
 
     // Outer border, drawn regardless of fog so the play field always reads clearly.
-    ctx.strokeStyle = border;
+    ctx.strokeStyle = wallColor;
     ctx.lineWidth = Math.max(2, cellPx * 0.08);
     ctx.strokeRect(0, 0, CANVAS_PX, CANVAS_PX);
 
@@ -128,7 +130,7 @@ export function MazeCanvas({ maze, start, goal, mouse, revealed, trail, path, on
     ctx.textBaseline = "middle";
     ctx.fillText("🧀", goal.x * cellPx + cellPx / 2, goal.y * cellPx + cellPx / 2 + fontSize * 0.05);
     ctx.fillText("🐭", mouse.x * cellPx + cellPx / 2, mouse.y * cellPx + cellPx / 2 + fontSize * 0.05);
-  }, [maze, start, goal, mouse, revealed, trail, path]);
+  }, [maze, start, goal, mouse, revealed, trail, path, isDarkMode]);
 
   function handleClick(e: React.MouseEvent<HTMLCanvasElement>) {
     if (!onCellClick || !pickingActive) return;
