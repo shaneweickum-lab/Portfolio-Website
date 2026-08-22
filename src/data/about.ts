@@ -1,14 +1,14 @@
 export const bio = {
-  headline: "AI engineer. Storyteller. Compulsive worldbuilder.",
+  headline: "AI engineer. Automation & AI integration consultant.",
   intro: [
-    "I spend my working hours building AI systems — agentic pipelines, tool-using models, and the unglamorous infrastructure that makes them reliable in production instead of just impressive in a demo.",
-    "I spend the rest of my hours somewhere else entirely: building fictional worlds, drafting novels, and chasing down the kind of internal consistency that makes a place feel real. Both halves are the same instinct — take something sprawling and give it structure.",
+    "I spend my time building AI systems and automation — agentic pipelines, tool-using models, and the unglamorous infrastructure that makes them reliable in production instead of just impressive in a demo.",
+    "That same instinct — take something sprawling and give it structure — is why I now help other businesses figure out where automation and AI actually belong in their operations, and just as importantly, where they don't.",
   ],
 };
 
 export const skillGroups = [
   {
-    title: "AI Engineering",
+    title: "AI Engineering & Integration",
     accent: "signal" as const,
     skills: [
       "LLM application architecture",
@@ -20,15 +20,15 @@ export const skillGroups = [
     ],
   },
   {
-    title: "Creative & Authoring",
+    title: "Automation & Delivery",
     accent: "ember" as const,
     skills: [
-      "Long-form fiction",
-      "Worldbuilding systems",
-      "Narrative structure & editing",
-      "Voice & style development",
-      "Serialized storytelling",
-      "Collaborative fiction",
+      "Deterministic automation & integrations",
+      "API / webhook / systems integration",
+      "Workflow & business-process automation",
+      "Security-conscious architecture",
+      "Full-stack product development",
+      "Technical audits & consulting",
     ],
   },
 ];
@@ -36,9 +36,9 @@ export const skillGroups = [
 export const timeline = [
   {
     year: "Now",
-    title: "Building AI-native products",
+    title: "Building AI-native products — and helping other businesses do the same",
     description:
-      "Designing and shipping agentic AI systems, while writing fiction and expanding a set of interconnected fictional worlds on the side.",
+      "Designing and shipping agentic AI systems, and consulting on where automation and AI integration actually create value for other companies.",
   },
   {
     year: "Earlier",
@@ -48,8 +48,8 @@ export const timeline = [
   },
   {
     year: "Always",
-    title: "Writing",
+    title: "Finding the right tool for the job",
     description:
-      "Before any of it was a career, it was notebooks full of maps, timelines, and characters. That part never stopped.",
+      "Long before any of it was a career, it was about picking the right solution to a problem — not the most impressive one. That instinct hasn't changed.",
   },
 ];

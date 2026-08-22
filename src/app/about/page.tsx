@@ -7,7 +7,7 @@ import { bio, skillGroups, timeline } from "@/data/about";
 
 export const metadata: Metadata = {
   title: "Get to Know Me",
-  description: "Background, skills, and the story behind the work.",
+  description: "Background and experience behind the automation and AI integration consulting work.",
 };
 
 export default function AboutPage() {
@@ -16,7 +16,7 @@ export default function AboutPage() {
       <SectionHeader
         kicker="Get to know me"
         title={bio.headline}
-        accent="wonder"
+        accent="signal"
       />
 
       <div className="mt-8 space-y-4 text-lg text-muted">
@@ -55,8 +55,8 @@ export default function AboutPage() {
         <ol className="mt-6 space-y-8 border-l border-border pl-6">
           {timeline.map((entry) => (
             <li key={entry.title} className="relative">
-              <span className="absolute -left-[29px] top-1 h-2.5 w-2.5 rounded-full bg-wonder" />
-              <p className="font-mono text-xs uppercase tracking-[0.2em] text-wonder">
+              <span className="absolute -left-[29px] top-1 h-2.5 w-2.5 rounded-full bg-signal" />
+              <p className="font-mono text-xs uppercase tracking-[0.2em] text-signal">
                 {entry.year}
               </p>
               <h3 className="mt-1 font-medium text-foreground">
@@ -74,16 +74,16 @@ export default function AboutPage() {
         </h2>
         <div className="mt-6 flex flex-wrap justify-center gap-4">
           <Link
-            href="/projects"
+            href="/services"
             className="inline-flex items-center gap-2 rounded-full bg-signal px-5 py-3 text-sm font-medium text-white"
           >
-            Engineering work <ArrowRight size={16} />
+            Work with me <ArrowRight size={16} />
           </Link>
           <Link
-            href="/worlds"
-            className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-3 text-sm font-medium text-foreground hover:border-ember/60 hover:text-ember"
+            href="/projects"
+            className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-3 text-sm font-medium text-foreground hover:border-signal/60 hover:text-signal"
           >
-            Creative work <ArrowRight size={16} />
+            Case studies <ArrowRight size={16} />
           </Link>
         </div>
       </section>

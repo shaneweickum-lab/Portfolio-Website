@@ -1,19 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import {
-  getAllBooks,
-  getAllCreativity,
-  getAllProjects,
-  getAllWorlds,
-} from "@/lib/content";
-import { ProjectCard, BookCard, WorldCard, CreativityCard } from "@/components/cards";
+import { getAllProjects } from "@/lib/content";
+import { ProjectCard } from "@/components/cards";
+import { howIWork, philosophy, positioning, tagline } from "@/data/services";
 
 export default function HomePage() {
-  const projects = getAllProjects().slice(0, 2);
-  const books = getAllBooks().slice(0, 1);
-  const worlds = getAllWorlds().slice(0, 1);
-  const creativity = getAllCreativity().slice(0, 3);
+  const projects = getAllProjects().slice(0, 3);
 
   return (
     <div>
@@ -33,36 +26,28 @@ export default function HomePage() {
           <p className="font-mono text-sm uppercase tracking-[0.25em] text-signal">
             Shane Weickum
           </p>
-          <h1 className="mt-6 max-w-3xl font-display text-5xl font-medium tracking-tight text-white sm:text-6xl">
-            I build intelligent systems.{" "}
-            <span className="text-ember">I build worlds.</span>
+          <h1 className="mt-6 max-w-3xl font-display text-5xl font-medium tracking-tight text-white [text-shadow:0_2px_16px_rgba(0,0,0,0.7)] sm:text-6xl">
+            Automation & AI Integration Consulting
           </h1>
-          <p className="mt-6 max-w-2xl text-lg text-white/80">
-            AI engineer by trade, storyteller and worldbuilder by nature. This
-            is where the two sides of my work live side by side — shipped
-            projects, unfinished novels, sprawling fictional worlds, and
-            whatever else I&apos;m making.
+          <p className="mt-4 font-mono text-sm uppercase tracking-[0.2em] text-ember [text-shadow:0_1px_10px_rgba(0,0,0,0.85)]">
+            {tagline}
+          </p>
+          <p className="mt-6 max-w-2xl text-lg text-white/80 [text-shadow:0_1px_10px_rgba(0,0,0,0.7)]">
+            {positioning}
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
             <Link
-              href="/projects"
-              className="inline-flex items-center gap-2 rounded-full bg-signal px-5 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90"
-            >
-              See the engineering
-              <ArrowRight size={16} />
-            </Link>
-            <Link
               href="/services"
-              className="inline-flex items-center gap-2 rounded-full border border-white/30 px-5 py-3 text-sm font-medium text-white transition-colors hover:border-signal/60 hover:text-signal"
+              className="inline-flex items-center gap-2 rounded-full bg-signal px-5 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90"
             >
               Work with me
               <ArrowRight size={16} />
             </Link>
             <Link
-              href="/worlds"
-              className="inline-flex items-center gap-2 rounded-full border border-white/30 px-5 py-3 text-sm font-medium text-white transition-colors hover:border-ember/60 hover:text-ember"
+              href="/projects"
+              className="inline-flex items-center gap-2 rounded-full border border-white/30 px-5 py-3 text-sm font-medium text-white transition-colors hover:border-signal/60 hover:text-signal"
             >
-              Step into the worlds
+              See the case studies
               <ArrowRight size={16} />
             </Link>
           </div>
@@ -70,43 +55,29 @@ export default function HomePage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-6 py-20">
-        <div className="grid gap-6 sm:grid-cols-2">
-          <div className="rounded-2xl border border-border bg-surface p-8">
-            <p className="font-mono text-xs uppercase tracking-[0.2em] text-signal">
-              The engineer
-            </p>
-            <h2 className="mt-3 font-display text-2xl font-medium text-foreground">
-              AI systems that ship
-            </h2>
-            <p className="mt-3 text-sm text-muted">
-              Agentic architectures, applied LLM tooling, and production
-              systems built for real users — not just demos.
-            </p>
-            <Link
-              href="/projects"
-              className="mt-5 inline-flex items-center gap-1 text-sm font-medium text-signal"
-            >
-              Browse projects <ArrowRight size={14} />
-            </Link>
-          </div>
-          <div className="rounded-2xl border border-border bg-surface p-8">
-            <p className="font-mono text-xs uppercase tracking-[0.2em] text-ember">
-              The worldbuilder
-            </p>
-            <h2 className="mt-3 font-display text-2xl font-medium text-foreground">
-              Stories with real bones
-            </h2>
-            <p className="mt-3 text-sm text-muted">
-              Novels-in-progress, deep worldbuilding, and the systems of
-              magic, politics, and history that hold them together.
-            </p>
-            <Link
-              href="/books"
-              className="mt-5 inline-flex items-center gap-1 text-sm font-medium text-ember"
-            >
-              Browse books <ArrowRight size={14} />
-            </Link>
-          </div>
+        <div className="rounded-2xl border border-border bg-surface-muted p-10">
+          <h2 className="font-display text-2xl font-medium text-foreground">{philosophy.title}</h2>
+          <p className="mt-4 max-w-2xl text-sm text-muted">{philosophy.paragraphs[0]}</p>
+          <p className="mt-4 max-w-2xl border-l-2 border-ember pl-4 text-sm font-medium text-foreground">
+            {philosophy.closing}
+          </p>
+          <Link
+            href="/services"
+            className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-signal"
+          >
+            How I work <ArrowRight size={14} />
+          </Link>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-6 py-12">
+        <div className="grid gap-6 sm:grid-cols-5">
+          {howIWork.map((item) => (
+            <div key={item.step}>
+              <p className="font-mono text-sm text-signal">{item.step}</p>
+              <p className="mt-2 font-medium text-foreground">{item.title}</p>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -114,54 +85,19 @@ export default function HomePage() {
         <section className="mx-auto max-w-6xl px-6 py-12">
           <div className="flex items-center justify-between">
             <h2 className="font-display text-2xl font-medium text-foreground">
-              Featured projects
+              Case studies
             </h2>
             <Link href="/projects" className="text-sm text-signal">
               View all
             </Link>
           </div>
-          <div className="mt-6 grid gap-5 sm:grid-cols-2">
+          <p className="mt-2 max-w-2xl text-sm text-muted">
+            Real, shipped systems — the same engineering judgment behind the
+            consulting work.
+          </p>
+          <div className="mt-6 grid gap-5 sm:grid-cols-3">
             {projects.map((project) => (
               <ProjectCard key={project.slug} project={project} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {(books.length > 0 || worlds.length > 0) && (
-        <section className="mx-auto max-w-6xl px-6 py-12">
-          <div className="flex items-center justify-between">
-            <h2 className="font-display text-2xl font-medium text-foreground">
-              From the worlds
-            </h2>
-            <Link href="/worlds" className="text-sm text-ember">
-              View all
-            </Link>
-          </div>
-          <div className="mt-6 grid gap-5 sm:grid-cols-2">
-            {books.map((book) => (
-              <BookCard key={book.slug} book={book} />
-            ))}
-            {worlds.map((world) => (
-              <WorldCard key={world.slug} world={world} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {creativity.length > 0 && (
-        <section className="mx-auto max-w-6xl px-6 py-12">
-          <div className="flex items-center justify-between">
-            <h2 className="font-display text-2xl font-medium text-foreground">
-              Creative experiments
-            </h2>
-            <Link href="/creativity" className="text-sm text-wonder">
-              View all
-            </Link>
-          </div>
-          <div className="mt-6 grid gap-5 sm:grid-cols-3">
-            {creativity.map((item) => (
-              <CreativityCard key={item.slug} item={item} />
             ))}
           </div>
         </section>
@@ -173,8 +109,8 @@ export default function HomePage() {
             Want the fuller picture?
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-sm text-muted">
-            Skills, background, and the story of how an AI engineer ended up
-            building fantasy worlds on the side.
+            Background, skills, and the experience behind the automation and
+            AI integration work.
           </p>
           <Link
             href="/about"
