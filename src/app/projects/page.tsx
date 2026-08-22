@@ -6,8 +6,8 @@ import { ProjectCard } from "@/components/cards";
 import { getAllProjects } from "@/lib/content";
 
 export const metadata: Metadata = {
-  title: "Projects",
-  description: "AI engineering projects, agents, and applied ML work.",
+  title: "Case Studies",
+  description: "Real, shipped systems — the engineering judgment behind the automation and AI integration consulting work.",
 };
 
 export default function ProjectsPage() {
@@ -16,9 +16,9 @@ export default function ProjectsPage() {
   return (
     <div className="mx-auto max-w-6xl px-6 py-16">
       <SectionHeader
-        kicker="AI Engineering"
-        title="Projects"
-        description="Agentic systems, applied LLM tooling, and infrastructure built to actually run in production."
+        kicker="Proof of work"
+        title="Case Studies"
+        description="Real, shipped systems — agentic tooling, deterministic automation, and infrastructure built to actually run in production. The same judgment behind the consulting work."
         accent="signal"
       />
 

@@ -8,11 +8,8 @@ import { Logo } from "@/components/logo";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 const NAV_ITEMS = [
-  { href: "/projects", label: "Projects" },
   { href: "/services", label: "Services" },
-  { href: "/books", label: "Books" },
-  { href: "/worlds", label: "Worlds" },
-  { href: "/creativity", label: "Creativity" },
+  { href: "/projects", label: "Case Studies" },
   { href: "/about", label: "Get to Know Me" },
 ];
 
