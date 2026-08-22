@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import {
@@ -16,17 +17,27 @@ export default function HomePage() {
 
   return (
     <div>
-      <section className="relative overflow-hidden border-b border-border">
-        <div className="bg-noise absolute inset-0 opacity-40" />
+      <section className="relative flex min-h-[calc(100vh-4rem)] items-center overflow-hidden border-b border-border">
+        <Image
+          src="/images/digital_hero.png"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-black/35" />
+        <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-background via-background/10 to-transparent" />
+
         <div className="relative mx-auto max-w-6xl px-6 py-24 sm:py-32">
           <p className="font-mono text-sm uppercase tracking-[0.25em] text-signal">
             Shane Weickum
           </p>
-          <h1 className="mt-6 max-w-3xl font-display text-5xl font-medium tracking-tight text-foreground sm:text-6xl">
+          <h1 className="mt-6 max-w-3xl font-display text-5xl font-medium tracking-tight text-white sm:text-6xl">
             I build intelligent systems.{" "}
             <span className="text-ember">I build worlds.</span>
           </h1>
-          <p className="mt-6 max-w-2xl text-lg text-muted">
+          <p className="mt-6 max-w-2xl text-lg text-white/80">
             AI engineer by trade, storyteller and worldbuilder by nature. This
             is where the two sides of my work live side by side — shipped
             projects, unfinished novels, sprawling fictional worlds, and
@@ -41,8 +52,15 @@ export default function HomePage() {
               <ArrowRight size={16} />
             </Link>
             <Link
+              href="/services"
+              className="inline-flex items-center gap-2 rounded-full border border-white/30 px-5 py-3 text-sm font-medium text-white transition-colors hover:border-signal/60 hover:text-signal"
+            >
+              Work with me
+              <ArrowRight size={16} />
+            </Link>
+            <Link
               href="/worlds"
-              className="inline-flex items-center gap-2 rounded-full border border-border px-5 py-3 text-sm font-medium text-foreground transition-colors hover:border-ember/60 hover:text-ember"
+              className="inline-flex items-center gap-2 rounded-full border border-white/30 px-5 py-3 text-sm font-medium text-white transition-colors hover:border-ember/60 hover:text-ember"
             >
               Step into the worlds
               <ArrowRight size={16} />
