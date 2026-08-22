@@ -130,5 +130,5 @@ export const whoIHelp = {
   audience:
     "Small businesses, local businesses, nonprofits, professional services, and growing organizations that want to modernize their operations without overcomplicating them.",
   location:
-    "Based in Southwest Florida — I work with local businesses as well as organizations beyond the region.",
+    "Based in Central Florida — I work with local businesses as well as organizations beyond the region.",
 };
