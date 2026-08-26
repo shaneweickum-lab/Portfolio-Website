@@ -75,7 +75,7 @@ export default function AboutPage() {
         <div className="mt-6 flex flex-wrap justify-center gap-4">
           <Link
             href="/services"
-            className="inline-flex items-center gap-2 rounded-full bg-signal px-5 py-3 text-sm font-medium text-white"
+            className="inline-flex items-center gap-2 rounded-full bg-signal px-5 py-3 text-sm font-medium text-onaccent"
           >
             Work with me <ArrowRight size={16} />
           </Link>

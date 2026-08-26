@@ -37,8 +37,8 @@ export default function HomePage() {
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
             <Link
-              href="/services"
-              className="inline-flex items-center gap-2 rounded-full bg-signal px-5 py-3 text-sm font-medium text-white transition-opacity hover:opacity-90"
+              href="/intake"
+              className="inline-flex items-center gap-2 rounded-full bg-signal px-5 py-3 text-sm font-medium text-onaccent transition-opacity hover:opacity-90"
             >
               Work with me
               <ArrowRight size={16} />

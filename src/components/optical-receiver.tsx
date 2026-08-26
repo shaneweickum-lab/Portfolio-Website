@@ -211,7 +211,7 @@ export function OpticalReceiver() {
           <p className="text-sm text-signal">File fully reconstructed.</p>
           <button
             onClick={downloadFile}
-            className="rounded-full bg-signal px-6 py-3 text-sm font-medium text-white"
+            className="rounded-full bg-signal px-6 py-3 text-sm font-medium text-onaccent"
           >
             Download file
           </button>

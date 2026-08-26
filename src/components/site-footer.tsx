@@ -15,6 +15,9 @@ export function SiteFooter() {
           <Link href="/about" className="hover:text-foreground">
             Get to Know Me
           </Link>
+          <Link href="/intake" className="hover:text-foreground">
+            Work With Me
+          </Link>
         </div>
       </div>
     </footer>

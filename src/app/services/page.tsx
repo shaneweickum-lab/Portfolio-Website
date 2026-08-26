@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowUpRight, Check } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Check } from "lucide-react";
 import { SectionHeader } from "@/components/section-header";
 import {
   featuredService,
@@ -108,6 +108,23 @@ export default function ServicesPage() {
         <h2 className="font-display text-2xl font-medium text-foreground">Who I help</h2>
         <p className="mt-4 max-w-2xl text-sm text-muted">{whoIHelp.audience}</p>
         <p className="mt-2 max-w-2xl text-sm text-muted">{whoIHelp.location}</p>
+      </section>
+
+      {/* CTA */}
+      <section className="mt-20 rounded-2xl border border-border bg-surface-muted p-10 text-center">
+        <h2 className="font-display text-2xl font-medium text-foreground">
+          Ready to figure out where this actually helps?
+        </h2>
+        <p className="mx-auto mt-3 max-w-xl text-sm text-muted">
+          Start with the intake form — it&apos;s the same discovery I&apos;d run in a first
+          working session.
+        </p>
+        <Link
+          href="/intake"
+          className="mt-6 inline-flex items-center gap-2 rounded-full bg-signal px-5 py-3 text-sm font-medium text-onaccent transition-opacity hover:opacity-90"
+        >
+          Start the intake <ArrowRight size={16} />
+        </Link>
       </section>
     </div>
   );

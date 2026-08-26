@@ -34,7 +34,7 @@ function Pill({
       onClick={onClick}
       disabled={disabled}
       className={`rounded-full px-3 py-1.5 text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
-        active ? "bg-signal text-white" : "border border-border text-muted hover:text-foreground"
+        active ? "bg-signal text-onaccent" : "border border-border text-muted hover:text-foreground"
       }`}
     >
       {children}
@@ -242,7 +242,7 @@ export function MazeRunnerApp() {
               <button
                 onClick={m.runAlgorithm}
                 disabled={m.algoPhase === "running"}
-                className="flex-1 rounded-full bg-signal px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+                className="flex-1 rounded-full bg-signal px-4 py-2 text-sm font-medium text-onaccent disabled:opacity-50"
               >
                 Run
               </button>
