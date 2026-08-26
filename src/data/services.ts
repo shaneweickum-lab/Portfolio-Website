@@ -1,7 +1,28 @@
-export const tagline = "Right Tool. Right Task. Real Value.";
+export const tagline = "Right-sized AI. Built once. Reused, not rebuilt.";
 
 export const positioning =
   "Sustainable AI & Automation Consulting — helping small businesses work smarter with right-sized automation and AI, without the cost, complexity, or waste of oversized systems.";
+
+export const ourApproach = {
+  kicker: "Our Approach",
+  title: "Sustainable, by practice — not by claim",
+  intro:
+    "Most AI consulting defaults to the biggest model available, billed by the token, provisioned on demand. It works, but it's wasteful — most business problems don't need a frontier model, they need the right one, sized for the job.",
+  points: [
+    "Models are sized to the task. A 1B–7B parameter model, not a frontier API call, for work that doesn't need frontier-scale reasoning — classification, extraction, routing, summarization, the actual bulk of what small businesses need AI for.",
+    "One base model, trained carefully, reused across every client. Each engagement adds a lightweight adapter on top rather than training a new model from scratch. Less compute spent per client, not more.",
+    "Compute lives on owned hardware, not elastic cloud infrastructure spun up and torn down per project.",
+    "Automation comes first where automation is enough. AI gets used where judgment is genuinely required — not by default, everywhere, because it's available.",
+  ],
+  closing:
+    "The result: builds that sometimes take longer than a rushed cloud-first shop would quote — and outcomes that don't carry the compute cost, or the price tag, of solving a small problem with large-scale infrastructure.",
+};
+
+export const sustainabilityShort =
+  "Sustainable AI, in practice: right-sized models instead of default frontier APIs, one base model reused per client instead of retrained per project, and compute that lives on owned hardware instead of elastic cloud spend. Sometimes slower. Always built to last.";
+
+export const sustainabilityTimelineNote =
+  "Timelines reflect sustainable build practices — right-sized models trained carefully once, not the fastest possible cloud-compute sprint. If speed matters more than footprint for your project, say so during intake and we'll scope accordingly.";
 
 export const capabilityFlow = [
   "Consult",
@@ -87,6 +108,7 @@ const aiAutomationService = {
   price: "from $6,800",
   priceNote: "project-based",
   timeline: "3–8 weeks",
+  sustainabilityNote: sustainabilityTimelineNote,
   ctaLabel: "Get a quote",
   summary: "AI introduced only where it provides real, distinct value.",
   details: [
@@ -136,6 +158,7 @@ export const softwareCategory = {
       price: "from $16,000",
       priceNote: "project-based",
       ctaLabel: "Get a quote",
+      note: sustainabilityTimelineNote,
       details: [
         "Custom internal tools and dashboards",
         "Integrations between existing systems",

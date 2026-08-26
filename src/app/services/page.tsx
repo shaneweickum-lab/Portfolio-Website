@@ -34,6 +34,7 @@ type LadderTier = {
   details: string[];
   accent?: "signal" | "ember";
   proof?: { label: string; description: string; href: string };
+  sustainabilityNote?: string;
 };
 
 type CompactTier = {
@@ -45,6 +46,7 @@ type CompactTier = {
   details: string[];
   proof?: { label: string; description: string; href: string };
   sustainable?: boolean;
+  note?: string;
 };
 
 function CategoryHeader({ number, title, blurb }: { number: string; title: string; blurb?: string }) {
@@ -86,6 +88,7 @@ function ServiceCard({ tier }: { tier: CompactTier }) {
           <ArrowUpRight size={12} />
         </Link>
       )}
+      {tier.note && <p className="mt-3 text-[11px] leading-relaxed text-ok/80">{tier.note}</p>}
       <div className="mt-auto pt-5">
         <p className="font-display text-lg font-semibold text-foreground">{tier.price}</p>
         <p className="mt-0.5 font-mono text-[10px] uppercase tracking-wide text-faint">{tier.priceNote}</p>
@@ -128,6 +131,9 @@ function TierRow({ tier, flagship = false }: { tier: LadderTier; flagship?: bool
         <p className="mt-3 font-mono text-[11px] text-faint">
           Timeline: <span className="text-muted">{tier.timeline}</span>
         </p>
+        {tier.sustainabilityNote && (
+          <p className="mt-2 max-w-md text-[11px] leading-relaxed text-ok/80">{tier.sustainabilityNote}</p>
+        )}
         {tier.proof && (
           <Link
             href={tier.proof.href}
