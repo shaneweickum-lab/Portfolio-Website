@@ -194,7 +194,11 @@ export function IntakeForm() {
             </Field>
           </div>
           <Field label="Team size" optional>
-            <ChoiceGroup type="radio" name="team_size" options={["Just me", "2-5", "6-20", "21+"]} />
+            <ChoiceGroup
+              type="radio"
+              name="team_size"
+              options={["Just me", "2-5", "6-15", "16-30", "31+"]}
+            />
           </Field>
         </div>
 

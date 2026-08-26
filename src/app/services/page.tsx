@@ -12,6 +12,7 @@ import {
   philosophy,
   positioning,
   serviceCategories,
+  smallBusinessNote,
   tagline,
   technologyPrinciple,
   whoIHelp,
@@ -188,6 +189,20 @@ export default function ServicesPage() {
             <TierRow key={tier.title} tier={tier} />
           ))}
         </div>
+      </div>
+
+      {/* Small-business pricing note */}
+      <div className="mt-6 rounded-[2px] border border-[var(--accent-dim)] bg-gradient-to-br from-signal/[0.06] to-transparent p-6">
+        <p className="mb-2.5 font-mono text-[11px] uppercase tracking-[0.08em] text-signal">
+          {smallBusinessNote.eyebrow}
+        </p>
+        <p className="max-w-2xl text-sm text-muted">{smallBusinessNote.paragraph}</p>
+        <Link
+          href="/intake"
+          className="mt-3.5 inline-block border-b border-[var(--accent-dim)] pb-0.5 font-mono text-[11.5px] uppercase tracking-wide text-signal transition-colors hover:text-ember"
+        >
+          {smallBusinessNote.ctaLabel} →
+        </Link>
       </div>
 
       {/* 03–08 — the wider capability catalog */}
