@@ -1,4 +1,6 @@
-export const tagline = "Right-sized AI. Built once. Reused, not rebuilt.";
+export const tagline = "Right tool, Right task, Real value.";
+
+export const slogan = "We build solutions for your problems like magic.";
 
 export const positioning =
   "Sustainable AI & Automation Consulting — helping small businesses work smarter with right-sized automation and AI, without the cost, complexity, or waste of oversized systems.";
@@ -329,10 +331,12 @@ export const privateAiCategory = {
     {
       title: "Custom Small Language Models",
       sustainable: true,
-      audienceLine: "Business-specific AI systems built on appropriately sized models — not the largest model available.",
+      comingSoon: true,
+      audienceLine:
+        "Business-specific AI systems built on appropriately sized models — not the largest model available. Waiting on dedicated training/inference hardware before taking this on — get in touch to be first in line once it's available.",
       price: "Custom",
       priceNote: "scoped by workload",
-      ctaLabel: "Discuss your project",
+      ctaLabel: "Join the waitlist",
       details: [
         "Domain adaptation, LoRA adapters, and tool calling on top of a base SLM",
         "RAG and context compilation tied into your own systems",

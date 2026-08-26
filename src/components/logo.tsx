@@ -46,21 +46,14 @@ export function Logo() {
       className="flex items-baseline font-mono text-sm font-semibold tracking-tight text-foreground"
     >
       <motion.span layout="position" className="inline-block">
-        S
+        W
       </motion.span>
-      <AnimatePresence>
-        {!collapsed && (
-          <motion.span key="hane" layout="position" className="inline-block" {...fadeSlide}>
-            hane
-          </motion.span>
-        )}
-      </AnimatePresence>
       <AnimatePresence>
         {!collapsed && (
           <motion.span
             key="dot"
             layout="position"
-            className="inline-block text-signal"
+            className="inline-block text-wonder"
             {...dotBounce}
           >
             .
@@ -68,12 +61,12 @@ export function Logo() {
         )}
       </AnimatePresence>
       <motion.span layout="position" className="inline-block">
-        W
+        P
       </motion.span>
       <AnimatePresence>
         {!collapsed && (
-          <motion.span key="eickum" layout="position" className="inline-block" {...fadeSlide}>
-            eickum
+          <motion.span key="solutions" layout="position" className="inline-block" {...fadeSlide}>
+            . Solutions
           </motion.span>
         )}
       </AnimatePresence>

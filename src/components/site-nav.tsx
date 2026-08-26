@@ -34,7 +34,7 @@ export function SiteNav() {
                 href={item.href}
                 className={`rounded-full px-4 py-2 text-sm transition-colors ${
                   active
-                    ? "bg-surface-muted text-foreground"
+                    ? "bg-wonder/10 text-foreground"
                     : "text-muted hover:text-foreground"
                 }`}
               >

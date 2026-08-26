@@ -46,6 +46,7 @@ type CompactTier = {
   details: string[];
   proof?: { label: string; description: string; href: string };
   sustainable?: boolean;
+  comingSoon?: boolean;
   note?: string;
 };
 
@@ -64,9 +65,10 @@ function CategoryHeader({ number, title, blurb }: { number: string; title: strin
 function ServiceCard({ tier }: { tier: CompactTier }) {
   return (
     <div className="flex flex-col rounded-[2px] border border-border bg-surface p-6">
-      {tier.sustainable && (
-        <div className="mb-2">
-          <Tag accent="ok">Sustainable AI</Tag>
+      {(tier.sustainable || tier.comingSoon) && (
+        <div className="mb-2 flex flex-wrap gap-1.5">
+          {tier.comingSoon && <Tag accent="ember">Coming Soon</Tag>}
+          {tier.sustainable && <Tag accent="ok">Sustainable AI</Tag>}
         </div>
       )}
       <h3 className="font-display text-base font-semibold text-foreground">{tier.title}</h3>
