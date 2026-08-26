@@ -26,11 +26,11 @@ export const metadata: Metadata = {
     template: "%s · Shane Weickum",
   },
   description:
-    "Automation & AI integration consulting from Shane Weickum — audits, deterministic automation, and custom software for small businesses.",
+    "Sustainable AI & automation consulting from Shane Weickum — right-sized audits, deterministic automation, AI integration, and custom software for small businesses.",
   openGraph: {
     title: "Shane Weickum",
     description:
-      "Automation & AI integration consulting from Shane Weickum — audits, deterministic automation, and custom software for small businesses.",
+      "Sustainable AI & automation consulting from Shane Weickum — right-sized audits, deterministic automation, AI integration, and custom software for small businesses.",
     type: "website",
   },
 };

@@ -7,7 +7,7 @@ import { bio, skillGroups, timeline } from "@/data/about";
 
 export const metadata: Metadata = {
   title: "Get to Know Me",
-  description: "Background and experience behind the automation and AI integration consulting work.",
+  description: "Background and experience behind the sustainable AI and automation consulting work.",
 };
 
 export default function AboutPage() {

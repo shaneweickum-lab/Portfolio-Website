@@ -1,7 +1,7 @@
 export const tagline = "Right Tool. Right Task. Real Value.";
 
 export const positioning =
-  "Automation & AI Integration Consulting — helping small businesses work smarter by integrating automation, AI, and custom software where they actually make sense.";
+  "Sustainable AI & Automation Consulting — helping small businesses work smarter with right-sized automation and AI, without the cost, complexity, or waste of oversized systems.";
 
 export const capabilityFlow = [
   "Consult",
@@ -292,6 +292,7 @@ export const privateAiCategory = {
   tiers: [
     {
       title: "Private & Local AI Deployment",
+      sustainable: true,
       audienceLine: "For businesses that want AI capability with more control over their infrastructure and data.",
       price: "Custom",
       priceNote: "scoped after consultation",
@@ -304,6 +305,7 @@ export const privateAiCategory = {
     },
     {
       title: "Custom Small Language Models",
+      sustainable: true,
       audienceLine: "Business-specific AI systems built on appropriately sized models — not the largest model available.",
       price: "Custom",
       priceNote: "scoped by workload",
@@ -358,6 +360,7 @@ export const supportCategory = {
     },
     {
       title: "Automation & AI Optimization",
+      sustainable: true,
       audienceLine: "For systems already in production — built by us or by someone else.",
       price: "from $1,200",
       priceNote: "project-based",

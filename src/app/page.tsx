@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { getAllProjects } from "@/lib/content";
 import { ProjectCard } from "@/components/cards";
+import { Tag } from "@/components/tag";
 import { howIWork, philosophy, positioning, tagline } from "@/data/services";
 
 export default function HomePage() {
@@ -26,8 +27,11 @@ export default function HomePage() {
           <p className="font-mono text-sm uppercase tracking-[0.25em] text-signal">
             Shane Weickum
           </p>
-          <h1 className="mt-6 max-w-3xl font-display text-5xl font-medium tracking-tight text-white [text-shadow:0_2px_16px_rgba(0,0,0,0.7)] sm:text-6xl">
-            Automation & AI Integration Consulting
+          <div className="mt-4">
+            <Tag accent="ok">Sustainable AI Solutions</Tag>
+          </div>
+          <h1 className="mt-4 max-w-3xl font-display text-5xl font-medium tracking-tight text-white [text-shadow:0_2px_16px_rgba(0,0,0,0.7)] sm:text-6xl">
+            Sustainable AI & Automation Consulting
           </h1>
           <p className="mt-4 font-mono text-sm uppercase tracking-[0.2em] text-ember [text-shadow:0_1px_10px_rgba(0,0,0,0.85)]">
             {tagline}

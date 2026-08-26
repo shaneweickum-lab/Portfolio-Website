@@ -44,6 +44,7 @@ type CompactTier = {
   ctaLabel: string;
   details: string[];
   proof?: { label: string; description: string; href: string };
+  sustainable?: boolean;
 };
 
 function CategoryHeader({ number, title, blurb }: { number: string; title: string; blurb?: string }) {
@@ -61,6 +62,11 @@ function CategoryHeader({ number, title, blurb }: { number: string; title: strin
 function ServiceCard({ tier }: { tier: CompactTier }) {
   return (
     <div className="flex flex-col rounded-[2px] border border-border bg-surface p-6">
+      {tier.sustainable && (
+        <div className="mb-2">
+          <Tag accent="ok">Sustainable AI</Tag>
+        </div>
+      )}
       <h3 className="font-display text-base font-semibold text-foreground">{tier.title}</h3>
       <p className="mt-1.5 text-xs leading-relaxed text-faint">{tier.audienceLine}</p>
       <ul className="mt-4 flex flex-col gap-1.5">
@@ -215,8 +221,8 @@ export default function ServicesPage() {
             ))}
           </div>
           {category.number === "06" && (
-            <div className="mt-5 rounded-2xl border border-border bg-surface-muted p-7">
-              <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-ember">
+            <div className="mt-5 rounded-2xl border border-ok/30 bg-gradient-to-br from-ok/[0.04] to-surface-muted p-7">
+              <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-ok">
                 {technologyPrinciple.eyebrow}
               </p>
               <h3 className="mt-2 font-display text-xl font-medium text-foreground">
@@ -229,10 +235,12 @@ export default function ServicesPage() {
               </div>
               <div className="mt-4 flex flex-wrap gap-2">
                 {technologyPrinciple.criteria.map((c) => (
-                  <Tag key={c}>{c}</Tag>
+                  <Tag key={c} accent="ok">
+                    {c}
+                  </Tag>
                 ))}
               </div>
-              <p className="mt-5 max-w-2xl border-l-2 border-ember pl-4 text-sm font-medium text-foreground">
+              <p className="mt-5 max-w-2xl border-l-2 border-ok pl-4 text-sm font-medium text-foreground">
                 {technologyPrinciple.closing}
               </p>
             </div>
