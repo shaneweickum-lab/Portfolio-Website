@@ -37,7 +37,7 @@ const auditService = {
   accent: "signal" as const,
   audienceLine:
     "For businesses with systems or AI already in place, or evaluating a bigger build.",
-  price: "from $1,800",
+  price: "from $2,200",
   priceNote: "scoped after intake",
   timeline: "2–3 weeks",
   ctaLabel: "Request scope",
@@ -61,7 +61,7 @@ const deterministicAutomationService = {
   title: "Deterministic Automation",
   accent: "ember" as const,
   audienceLine: "For defined, repetitive work that needs to run the same way every time.",
-  price: "from $3,500",
+  price: "from $4,200",
   priceNote: "project-based",
   timeline: "2–6 weeks",
   ctaLabel: "Get a quote",
@@ -84,7 +84,7 @@ const aiAutomationService = {
   title: "AI Automation & Integration",
   accent: "ember" as const,
   audienceLine: "For work that genuinely benefits from judgment, not just rules.",
-  price: "from $5,500",
+  price: "from $6,800",
   priceNote: "project-based",
   timeline: "3–8 weeks",
   ctaLabel: "Get a quote",
@@ -116,6 +116,13 @@ export const automationCategory = {
   tiers: [deterministicAutomationService, aiAutomationService],
 };
 
+export const smallBusinessNote = {
+  eyebrow: "Under 30 employees?",
+  paragraph:
+    "Standard pricing above is scoped for the systems and complexity most small teams run — but if your business has fewer than 30 employees, you may qualify for adjusted project pricing. Small operations shouldn't have to choose between enterprise-scale automation costs and staying on archaic systems for another five years.",
+  ctaLabel: "Ask about adjusted pricing",
+};
+
 export const softwareCategory = {
   number: "03",
   title: "Software & Application Development",
@@ -126,7 +133,7 @@ export const softwareCategory = {
     {
       title: "Custom Automation Applications",
       audienceLine: "When no off-the-shelf product fits and you need the missing piece.",
-      price: "from $9,000",
+      price: "from $16,000",
       priceNote: "project-based",
       ctaLabel: "Get a quote",
       details: [
@@ -209,7 +216,7 @@ export const softwareCategory = {
 export const addOnService = {
   title: "POS Migration & Custom Checkout",
   audienceLine: "POS integrations, card-reader connections, and custom checkout software.",
-  price: "from $6,000",
+  price: "from $9,500",
   priceNote: "scoped after audit",
   ctaLabel: "Get a quote",
   details: [
