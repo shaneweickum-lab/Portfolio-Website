@@ -25,7 +25,7 @@ export default function HomePage() {
 
         <div className="relative mx-auto max-w-6xl px-6 py-24 sm:py-32">
           <p className="font-mono text-sm uppercase tracking-[0.25em] text-signal">
-            W.P. Solutions
+            Wizards Playground
           </p>
           <div className="mt-4">
             <Tag accent="ok">Sustainable AI Solutions</Tag>
