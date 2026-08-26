@@ -2,14 +2,18 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { SectionHeader } from "@/components/section-header";
+import { Tag } from "@/components/tag";
 import {
-  addOnService,
+  automationCategory,
+  capabilityFlow,
+  consultingCategory,
   featuredService,
   howIWork,
   philosophy,
   positioning,
-  services,
+  serviceCategories,
   tagline,
+  technologyPrinciple,
   whoIHelp,
 } from "@/data/services";
 
@@ -18,7 +22,7 @@ export const metadata: Metadata = {
   description: positioning,
 };
 
-type Tier = {
+type LadderTier = {
   sectionLabel: string;
   title: string;
   audienceLine: string;
@@ -31,7 +35,65 @@ type Tier = {
   proof?: { label: string; description: string; href: string };
 };
 
-function TierRow({ tier, flagship = false }: { tier: Tier; flagship?: boolean }) {
+type CompactTier = {
+  title: string;
+  audienceLine: string;
+  price: string;
+  priceNote: string;
+  ctaLabel: string;
+  details: string[];
+  proof?: { label: string; description: string; href: string };
+};
+
+function CategoryHeader({ number, title, blurb }: { number: string; title: string; blurb?: string }) {
+  return (
+    <div className="mb-5 flex flex-col gap-1.5">
+      <div className="flex items-baseline gap-3">
+        <span className="font-mono text-xs text-signal">{number}</span>
+        <h2 className="font-display text-xl font-semibold text-foreground">{title}</h2>
+      </div>
+      {blurb && <p className="max-w-2xl text-sm text-muted">{blurb}</p>}
+    </div>
+  );
+}
+
+function ServiceCard({ tier }: { tier: CompactTier }) {
+  return (
+    <div className="flex flex-col rounded-[2px] border border-border bg-surface p-6">
+      <h3 className="font-display text-base font-semibold text-foreground">{tier.title}</h3>
+      <p className="mt-1.5 text-xs leading-relaxed text-faint">{tier.audienceLine}</p>
+      <ul className="mt-4 flex flex-col gap-1.5">
+        {tier.details.map((detail) => (
+          <li key={detail} className="relative pl-4 text-[12.5px] text-muted">
+            <span className="absolute left-0 text-[var(--accent-dim)]">—</span>
+            {detail}
+          </li>
+        ))}
+      </ul>
+      {tier.proof && (
+        <Link
+          href={tier.proof.href}
+          className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-signal"
+        >
+          See it in {tier.proof.label}
+          <ArrowUpRight size={12} />
+        </Link>
+      )}
+      <div className="mt-auto pt-5">
+        <p className="font-display text-lg font-semibold text-foreground">{tier.price}</p>
+        <p className="mt-0.5 font-mono text-[10px] uppercase tracking-wide text-faint">{tier.priceNote}</p>
+        <Link
+          href="/intake"
+          className="mt-2.5 inline-block border-b border-[var(--accent-dim)] pb-0.5 font-mono text-[11px] uppercase tracking-wide text-signal transition-colors hover:text-ember"
+        >
+          {tier.ctaLabel} →
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+function TierRow({ tier, flagship = false }: { tier: LadderTier; flagship?: boolean }) {
   const accentClass = tier.accent === "ember" ? "text-ember" : "text-signal";
   return (
     <div
@@ -99,22 +161,69 @@ export default function ServicesPage() {
         which tier fits, start with the consultation — it tells you which of the others (if any)
         you actually need.
       </p>
-
-      {/* Pricing ladder */}
-      <div className="mt-10 flex flex-col gap-0.5">
-        <TierRow tier={featuredService} flagship />
-        {services.map((service) => (
-          <TierRow key={service.title} tier={service} />
+      <p className="mt-5 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[11px] uppercase tracking-[0.08em] text-faint">
+        {capabilityFlow.map((step, i) => (
+          <span key={step} className="flex items-center gap-2">
+            <span className={i === 0 ? "text-signal" : "text-muted"}>{step}</span>
+            {i < capabilityFlow.length - 1 && <span className="text-[var(--accent-dim)]">→</span>}
+          </span>
         ))}
+      </p>
+
+      {/* 01 — Consulting / 02 — Automation: the core engagement ladder */}
+      <div className="mt-10">
+        <CategoryHeader number={consultingCategory.number} title={consultingCategory.title} />
+        <div className="flex flex-col gap-0.5">
+          <TierRow tier={featuredService} flagship />
+          {consultingCategory.tiers.map((tier) => (
+            <TierRow key={tier.title} tier={tier} />
+          ))}
+        </div>
       </div>
 
-      {/* Specialty add-on */}
-      <div className="mt-9 border-t border-dashed border-border pt-7">
-        <p className="mb-3.5 font-mono text-[11px] uppercase tracking-[0.1em] text-faint">
-          Specialty add-on
-        </p>
-        <TierRow tier={addOnService} />
+      <div className="mt-9">
+        <CategoryHeader number={automationCategory.number} title={automationCategory.title} />
+        <div className="flex flex-col gap-0.5">
+          {automationCategory.tiers.map((tier) => (
+            <TierRow key={tier.title} tier={tier} />
+          ))}
+        </div>
       </div>
+
+      {/* 03–08 — the wider capability catalog */}
+      {serviceCategories.map((category) => (
+        <div key={category.number} className="mt-9 border-t border-dashed border-border pt-8">
+          <CategoryHeader number={category.number} title={category.title} blurb={category.blurb} />
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {category.tiers.map((tier) => (
+              <ServiceCard key={tier.title} tier={tier} />
+            ))}
+          </div>
+          {category.number === "06" && (
+            <div className="mt-5 rounded-2xl border border-border bg-surface-muted p-7">
+              <p className="font-mono text-[11px] uppercase tracking-[0.1em] text-ember">
+                {technologyPrinciple.eyebrow}
+              </p>
+              <h3 className="mt-2 font-display text-xl font-medium text-foreground">
+                {technologyPrinciple.title}
+              </h3>
+              <div className="mt-3 max-w-2xl space-y-2 text-sm text-muted">
+                {technologyPrinciple.paragraphs.map((p) => (
+                  <p key={p}>{p}</p>
+                ))}
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {technologyPrinciple.criteria.map((c) => (
+                  <Tag key={c}>{c}</Tag>
+                ))}
+              </div>
+              <p className="mt-5 max-w-2xl border-l-2 border-ember pl-4 text-sm font-medium text-foreground">
+                {technologyPrinciple.closing}
+              </p>
+            </div>
+          )}
+        </div>
+      ))}
 
       {/* How I work */}
       <section className="mt-20">
