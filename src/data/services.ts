@@ -4,9 +4,13 @@ export const positioning =
   "Automation & AI Integration Consulting — helping small businesses work smarter by integrating automation, AI, and custom software where they actually make sense.";
 
 export const featuredService = {
-  title: "Automation & AI Strategy Consultation",
+  sectionLabel: "01 · Entry Point",
+  title: "Strategy Consultation",
+  audienceLine: "For anyone unsure where to start.",
   price: "$997",
   priceNote: "initial engagement",
+  timeline: "1–2 weeks",
+  ctaLabel: "Start here",
   summary:
     "The entry point. I learn how your business actually operates — not just what software you currently use — and identify where automation, AI, and custom software would create real, measurable value. And just as importantly, where they wouldn't.",
   details: [
@@ -18,8 +22,15 @@ export const featuredService = {
 
 export const services = [
   {
-    title: "Automation & AI Audits",
+    sectionLabel: "02 · Diagnostic",
+    title: "Automation & AI Audit",
     accent: "signal" as const,
+    audienceLine:
+      "For businesses with systems or AI already in place, or evaluating a bigger build.",
+    price: "from $1,800",
+    priceNote: "scoped after intake",
+    timeline: "2–3 weeks",
+    ctaLabel: "Request scope",
     summary:
       "A rigorous second look at your workflows, software, and any AI you've already adopted.",
     details: [
@@ -35,8 +46,14 @@ export const services = [
     },
   },
   {
+    sectionLabel: "03 · Build",
     title: "Deterministic Automation",
     accent: "ember" as const,
+    audienceLine: "For defined, repetitive work that needs to run the same way every time.",
+    price: "from $3,500",
+    priceNote: "project-based",
+    timeline: "2–6 weeks",
+    ctaLabel: "Get a quote",
     summary: "Reliable automation for predictable work — no LLM where none is needed.",
     details: [
       "APIs, webhooks, scheduled jobs, and rules engines",
@@ -51,8 +68,14 @@ export const services = [
     },
   },
   {
+    sectionLabel: "04 · Build",
     title: "AI Automation & Integration",
     accent: "ember" as const,
+    audienceLine: "For work that genuinely benefits from judgment, not just rules.",
+    price: "from $5,500",
+    priceNote: "project-based",
+    timeline: "3–8 weeks",
+    ctaLabel: "Get a quote",
     summary: "AI introduced only where it provides real, distinct value.",
     details: [
       "Document analysis, classification, extraction, and summarization",
@@ -67,8 +90,14 @@ export const services = [
     },
   },
   {
+    sectionLabel: "05 · Build",
     title: "Custom Automation Applications",
     accent: "signal" as const,
+    audienceLine: "When no off-the-shelf product fits and you need the missing piece.",
+    price: "from $9,000",
+    priceNote: "project-based",
+    timeline: "6–12+ weeks",
+    ctaLabel: "Get a quote",
     summary:
       "When no off-the-shelf product quite fits, I build the missing piece — internal tools, dashboards, portals, integrations, and AI-enabled software designed around your actual business.",
     details: [
@@ -83,6 +112,21 @@ export const services = [
     },
   },
 ];
+
+export const addOnService = {
+  sectionLabel: "+ · Payments",
+  title: "POS Migration & Custom Checkout",
+  audienceLine: "Card-reader integration, Square migrations, and custom checkout software.",
+  price: "from $6,000",
+  priceNote: "scoped after audit",
+  timeline: "4–10 weeks · runs alongside a build tier above",
+  ctaLabel: "Get a quote",
+  details: [
+    "Processor evaluation — keep, migrate, or replace your current setup",
+    "Physical card-reader integration (desktop, web, or mobile POS)",
+    "PCI-aware architecture — your software never touches raw card data",
+  ],
+};
 
 export const howIWork = [
   {
