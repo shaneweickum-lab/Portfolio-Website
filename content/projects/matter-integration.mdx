@@ -1,0 +1,63 @@
+---
+title: "Matter Integration Interface"
+summary: "Toggle a real, Matter-native smart plug on my home network from this page — live, when the bridge is running."
+date: "2026-08-26"
+role: "Design & implementation"
+status: "in-progress"
+draft: true
+stack: ["Next.js", "matter.js", "Node.js", "Fastify", "Cloudflare Tunnel", "Matter (Thread/Wi-Fi)"]
+tags: ["iot", "systems", "hardware"]
+links:
+  - label: "Try the live toggle"
+    href: "/projects/matter-integration"
+---
+
+## Why I built this
+
+Every other interactive piece on this site — Narrate, Airgap, Maze
+Runner — is entirely self-contained. Open the page, everything runs in
+your browser, no external dependency, nothing that can go down but the
+site itself. This one is different on purpose: it's the first project
+here with a real hardware dependency, because "Hardware & IoT
+Integration" is a service I actually offer, and the honest way to prove
+that is to connect something real, not simulate it.
+
+## What it is
+
+Three pieces:
+
+- **This page** — client-only, same as everything else here. It has no
+  backend of its own; it talks directly to the bridge below from your
+  browser.
+- **A local bridge** (`matter-bridge/` in this repo) — a small Node.js
+  process using [matter.js](https://github.com/project-chip/matter.js)
+  that speaks Matter directly to a real smart plug on my home network:
+  commission once, then read/write its OnOff cluster on every
+  connection.
+- **A Cloudflare Tunnel** — gives that local process a stable public
+  HTTPS address without exposing my home network directly, and without
+  a third-party relay service in between.
+
+## Why it's opt-in, not 24/7
+
+This isn't a limitation dressed up as a feature — it's the actual
+engineering answer to "how do you let the public internet flip a switch
+on a device in your house without that being a bad idea." The bridge
+only runs when I start it. When it's not running, this page says so
+honestly rather than faking a live demo. When it is running, a rate
+limiter and a 15-second auto-off timer mean no single visitor — or
+script — can do anything worse than turn a lamp on for fifteen seconds.
+
+## What made it hard
+
+Filled in once the bridge has actually run against real hardware —
+worth writing from what happened, not what I expected to happen.
+
+## Honest limitations
+
+This section gets written last, after real verification, not before —
+see `matter-bridge/README.md` for the current, specific list of what's
+confirmed working (the controller runtime, storage, and API shapes,
+checked against the real installed matter.js types) versus what still
+needs a real plug to prove (the commissioning handshake itself). This
+page stays out of production (`draft: true`) until that list is empty.
