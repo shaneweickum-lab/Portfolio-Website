@@ -63,11 +63,11 @@ export default async function SkillPage({ params }: { params: Params }) {
         <a
           href={downloadHref}
           download
-          className="inline-flex items-center gap-2 rounded-full bg-signal px-5 py-2.5 text-sm font-medium text-white hover:bg-signal/90"
+          className="inline-flex items-center gap-2 rounded-full bg-signal px-5 py-2.5 text-sm font-medium text-onaccent hover:bg-signal/90"
         >
           <Download size={16} />
           Download skill
-          {fileSizeLabel && <span className="text-white/70">({fileSizeLabel})</span>}
+          {fileSizeLabel && <span className="text-onaccent/70">({fileSizeLabel})</span>}
         </a>
       </div>
 

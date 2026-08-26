@@ -87,7 +87,7 @@ export function NarrateReader({
         <button
           onClick={() => chooseEngine("speech")}
           className={`flex-1 rounded-full px-3 py-1.5 transition-colors ${
-            !usingKokoro ? "bg-signal text-white" : "text-muted hover:text-foreground"
+            !usingKokoro ? "bg-signal text-onaccent" : "text-muted hover:text-foreground"
           }`}
         >
           Device voice
@@ -95,7 +95,7 @@ export function NarrateReader({
         <button
           onClick={() => chooseEngine("kokoro")}
           className={`flex flex-1 items-center justify-center gap-1.5 rounded-full px-3 py-1.5 transition-colors ${
-            usingKokoro ? "bg-signal text-white" : "text-muted hover:text-foreground"
+            usingKokoro ? "bg-signal text-onaccent" : "text-muted hover:text-foreground"
           }`}
         >
           <Sparkles size={14} />
@@ -189,7 +189,7 @@ export function NarrateReader({
           onClick={handlePlayPause}
           disabled={transportDisabled || isBuffering}
           aria-label={isPlaying ? "Pause" : "Play"}
-          className="flex h-16 w-16 items-center justify-center rounded-full bg-signal text-white disabled:opacity-40"
+          className="flex h-16 w-16 items-center justify-center rounded-full bg-signal text-onaccent disabled:opacity-40"
         >
           {isPlaying ? <Pause size={24} /> : <Play size={24} />}
         </button>

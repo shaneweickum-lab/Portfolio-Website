@@ -5,12 +5,12 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Logo } from "@/components/logo";
-import { ThemeToggle } from "@/components/theme-toggle";
 
 const NAV_ITEMS = [
   { href: "/services", label: "Services" },
   { href: "/projects", label: "Case Studies" },
   { href: "/about", label: "Get to Know Me" },
+  { href: "/intake", label: "Work With Me" },
 ];
 
 export function SiteNav() {
@@ -44,12 +44,7 @@ export function SiteNav() {
           })}
         </nav>
 
-        <div className="hidden items-center gap-3 md:flex">
-          <ThemeToggle />
-        </div>
-
         <div className="flex items-center gap-3 md:hidden">
-          <ThemeToggle />
           <button
             type="button"
             aria-label="Toggle navigation menu"

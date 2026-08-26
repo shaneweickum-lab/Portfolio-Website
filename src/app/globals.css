@@ -1,34 +1,23 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-@custom-variant dark (&:where(.dark, .dark *));
-
 :root {
-  --background: #fbfaf8;
-  --surface: #ffffff;
-  --surface-muted: #f2f0eb;
-  --foreground: #14130f;
-  --muted: #6b665c;
-  --border: #e4e0d8;
+  --background: #0d1117;
+  --surface: #141a22;
+  --surface-muted: #1a222c;
+  --foreground: #e7edf3;
+  --muted: #8fa1b3;
+  --border: #2a3542;
 
-  --accent-signal: #0e7490; /* engineering / projects: cyan */
-  --accent-ember: #b45309; /* creative / books & worlds: amber */
-  --accent-wonder: #6d28d9; /* creativity: violet */
+  --grid-line: #1e2733;
+  --faint: #5a6b7d;
+  --ok: #5fbf9f;
 
-  --font-serif: "Fraunces", "Iowan Old Style", serif;
-}
-
-.dark {
-  --background: #0a0a0c;
-  --surface: #131316;
-  --surface-muted: #1a1a1f;
-  --foreground: #f2f1ec;
-  --muted: #96938a;
-  --border: #2a2a30;
-
-  --accent-signal: #38bdf8;
-  --accent-ember: #f0a35c;
-  --accent-wonder: #a78bfa;
+  --accent-signal: #e3a857; /* primary accent: amber */
+  --accent-ember: #f0a35c; /* secondary accent: warmer amber, same family */
+  --accent-wonder: #a78bfa; /* unused on live pages, kept for content still in the repo */
+  --accent-dim: #8a6a3a; /* muted amber for borders/dividers, not exposed as a Tailwind color */
+  --onaccent: #191008; /* text color for content drawn on top of bg-signal/bg-ember */
 }
 
 @theme inline {
@@ -38,23 +27,30 @@
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-border: var(--border);
+  --color-faint: var(--faint);
+  --color-ok: var(--ok);
+  --color-onaccent: var(--onaccent);
   --color-signal: var(--accent-signal);
   --color-ember: var(--accent-ember);
   --color-wonder: var(--accent-wonder);
 
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-display: var(--font-fraunces);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
+  --font-display: var(--font-space-grotesk);
 }
 
 body {
-  background: var(--background);
+  background:
+    linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0 / 100% 44px,
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0 / 44px 100%,
+    var(--background);
+  background-attachment: local;
   color: var(--foreground);
 }
 
 ::selection {
   background: var(--accent-signal);
-  color: #06131a;
+  color: #191008;
 }
 
 .prose {
@@ -88,4 +84,42 @@ body {
       transparent 0
     );
   background-size: 22px 22px;
+}
+
+/* Bracket-corner focus decoration for form fields (see /intake) */
+.bracket-wrap {
+  position: relative;
+}
+.bracket-wrap::before,
+.bracket-wrap::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-color: var(--accent-signal);
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  pointer-events: none;
+}
+.bracket-wrap::before {
+  top: -1px;
+  left: -1px;
+  border-top: 1.5px solid;
+  border-left: 1.5px solid;
+}
+.bracket-wrap::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 1.5px solid;
+  border-right: 1.5px solid;
+}
+.bracket-wrap:focus-within::before,
+.bracket-wrap:focus-within::after {
+  opacity: 1;
+}
+.bracket-wrap:focus-within input,
+.bracket-wrap:focus-within textarea,
+.bracket-wrap:focus-within select {
+  border-color: var(--accent-dim);
+  background: var(--surface-muted);
 }

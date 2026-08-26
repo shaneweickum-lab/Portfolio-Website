@@ -174,7 +174,7 @@ export function OpticalSender() {
           <div className="mt-6 flex gap-3">
             <button
               onClick={startTransmitting}
-              className="rounded-full bg-signal px-6 py-3 text-sm font-medium text-white"
+              className="rounded-full bg-signal px-6 py-3 text-sm font-medium text-onaccent"
             >
               Start transmitting
             </button>
