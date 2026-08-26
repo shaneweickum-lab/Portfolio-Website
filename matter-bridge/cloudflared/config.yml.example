@@ -1,0 +1,15 @@
+# Copy to config.yml (gitignored — it references a real tunnel-id/credentials
+# file path once you've run the setup steps in README.md) and fill in <tunnel-id>.
+#
+# One-time setup (see README.md for the full walkthrough):
+#   cloudflared tunnel login
+#   cloudflared tunnel create matter-bridge
+#   cloudflared tunnel route dns matter-bridge matter.shaneweickum.dev
+
+tunnel: <tunnel-id>
+credentials-file: /home/shane/.cloudflared/<tunnel-id>.json
+
+ingress:
+  - hostname: matter.shaneweickum.dev
+    service: http://localhost:8787
+  - service: http_status:404

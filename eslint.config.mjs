@@ -12,8 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
-    // Standalone sibling apps lint themselves.
+    // Standalone sibling apps/packages lint themselves.
     "apps/**",
+    "matter-bridge/**",
   ]),
 ]);
 

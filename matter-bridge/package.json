@@ -1,0 +1,28 @@
+{
+  "name": "matter-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local-only bridge: commissions and controls a real Matter smart plug, exposed to the public portfolio site through a Cloudflare Tunnel. Never deployed — runs on Shane's own network, started manually.",
+  "type": "module",
+  "scripts": {
+    "commission": "tsx src/commission.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server.js",
+    "dev": "tsx src/server.ts",
+    "tunnel": "cloudflared tunnel run matter-bridge",
+    "demo": "concurrently -n bridge,tunnel -c green,blue \"npm:start\" \"npm:tunnel\""
+  },
+  "dependencies": {
+    "@fastify/cors": "^10.0.1",
+    "@fastify/rate-limit": "^10.1.1",
+    "@matter/main": "0.11.5",
+    "dotenv": "^16.4.5",
+    "fastify": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "concurrently": "^9.1.0",
+    "tsx": "^4.23.9",
+    "typescript": "^5"
+  }
+}
