@@ -4,10 +4,11 @@ import { ArrowRight } from "lucide-react";
 import { SectionHeader } from "@/components/section-header";
 import { Tag } from "@/components/tag";
 import { bio, skillGroups, timeline } from "@/data/about";
+import { sustainabilityShort } from "@/data/services";
 
 export const metadata: Metadata = {
   title: "Get to Know Me",
-  description: "Background and experience behind the automation and AI integration consulting work.",
+  description: "Background and experience behind the sustainable AI and automation consulting work.",
 };
 
 export default function AboutPage() {
@@ -23,6 +24,10 @@ export default function AboutPage() {
         {bio.intro.map((paragraph) => (
           <p key={paragraph}>{paragraph}</p>
         ))}
+      </div>
+
+      <div className="mt-8 border-l-2 border-ok pl-4 text-sm text-muted">
+        {sustainabilityShort}
       </div>
 
       <section className="mt-16">

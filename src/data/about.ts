@@ -1,5 +1,5 @@
 export const bio = {
-  headline: "AI engineer. Automation & AI integration consultant.",
+  headline: "AI engineer. Sustainable automation & AI integration consultant.",
   intro: [
     "I spend my time building AI systems and automation — agentic pipelines, tool-using models, and the unglamorous infrastructure that makes them reliable in production instead of just impressive in a demo.",
     "That same instinct — take something sprawling and give it structure — is why I now help other businesses figure out where automation and AI actually belong in their operations, and just as importantly, where they don't.",

@@ -18,6 +18,7 @@ const FIELD_LABELS: Record<string, string> = {
   current_process: "How it's done today",
   tried_already: "What's already been tried",
   success_looks_like: "What success looks like in 3 months",
+  speed_vs_sustainability: "Speed vs. sustainable build",
   needs: "What they think this needs",
   form_factor: "Solution form factor",
   involves_payments: "Involves payments?",
@@ -250,6 +251,14 @@ export function IntakeForm() {
           <SectionHead num="04" title="The Vision" />
           <Field label="What does success look like in 3 months?" optional>
             <textarea name="success_looks_like" className={`${inputClass} min-h-[84px] resize-y`} />
+          </Field>
+
+          <Field label="How much does build speed matter vs. doing this the sustainable way?" optional>
+            <ChoiceGroup
+              type="radio"
+              name="speed_vs_sustainability"
+              options={["Speed matters most", "Sustainability matters most", "Somewhere in between — let's talk"]}
+            />
           </Field>
 
           <Field label="What do you think this needs?" optional>

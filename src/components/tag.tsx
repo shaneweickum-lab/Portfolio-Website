@@ -5,12 +5,13 @@ export function Tag({
   accent = "muted",
 }: {
   children: ReactNode;
-  accent?: "signal" | "ember" | "wonder" | "muted";
+  accent?: "signal" | "ember" | "wonder" | "ok" | "muted";
 }) {
   const colorClass = {
     signal: "border-signal/40 text-signal",
     ember: "border-ember/40 text-ember",
     wonder: "border-wonder/40 text-wonder",
+    ok: "border-ok/40 text-ok",
     muted: "border-border text-muted",
   }[accent];
 

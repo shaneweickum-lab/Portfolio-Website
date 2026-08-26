@@ -3,7 +3,8 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { getAllProjects } from "@/lib/content";
 import { ProjectCard } from "@/components/cards";
-import { howIWork, philosophy, positioning, tagline } from "@/data/services";
+import { Tag } from "@/components/tag";
+import { howIWork, ourApproach, philosophy, positioning, tagline } from "@/data/services";
 
 export default function HomePage() {
   const projects = getAllProjects().slice(0, 3);
@@ -26,8 +27,11 @@ export default function HomePage() {
           <p className="font-mono text-sm uppercase tracking-[0.25em] text-signal">
             Shane Weickum
           </p>
-          <h1 className="mt-6 max-w-3xl font-display text-5xl font-medium tracking-tight text-white [text-shadow:0_2px_16px_rgba(0,0,0,0.7)] sm:text-6xl">
-            Automation & AI Integration Consulting
+          <div className="mt-4">
+            <Tag accent="ok">Sustainable AI Solutions</Tag>
+          </div>
+          <h1 className="mt-4 max-w-3xl font-display text-5xl font-medium tracking-tight text-white [text-shadow:0_2px_16px_rgba(0,0,0,0.7)] sm:text-6xl">
+            Sustainable AI & Automation Consulting
           </h1>
           <p className="mt-4 font-mono text-sm uppercase tracking-[0.2em] text-ember [text-shadow:0_1px_10px_rgba(0,0,0,0.85)]">
             {tagline}
@@ -51,6 +55,25 @@ export default function HomePage() {
               <ArrowRight size={16} />
             </Link>
           </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-6 py-20">
+        <div className="rounded-2xl border border-ok/30 bg-gradient-to-br from-ok/[0.04] to-surface-muted p-10">
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-ok">{ourApproach.kicker}</p>
+          <h2 className="mt-3 font-display text-2xl font-medium text-foreground">{ourApproach.title}</h2>
+          <p className="mt-4 max-w-2xl text-sm text-muted">{ourApproach.intro}</p>
+          <ul className="mt-6 flex max-w-3xl flex-col gap-3">
+            {ourApproach.points.map((point) => (
+              <li key={point} className="relative pl-5 text-sm text-muted">
+                <span className="absolute left-0 text-ok">—</span>
+                {point}
+              </li>
+            ))}
+          </ul>
+          <p className="mt-6 max-w-2xl border-l-2 border-ok pl-4 text-sm font-medium text-foreground">
+            {ourApproach.closing}
+          </p>
         </div>
       </section>
 
