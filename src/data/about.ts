@@ -1,7 +1,7 @@
 export const bio = {
-  headline: "W.P. Solutions — sustainable AI & automation, built with intention.",
+  headline: "Nodylus Automat/ons — sustainable AI & automation, built with intention.",
   intro: [
-    "W.P. Solutions (Wizards Playground) is a sustainable AI and automation consultancy founded by Shane Weickum, an AI engineer who spends his time building agentic pipelines, tool-using models, and the unglamorous infrastructure that makes them reliable in production instead of just impressive in a demo.",
+    "Nodylus Automat/ons is a sustainable AI and automation consultancy founded by Shane Weickum, an AI engineer who spends his time building agentic pipelines, tool-using models, and the unglamorous infrastructure that makes them reliable in production instead of just impressive in a demo.",
     "That same instinct — take something sprawling and give it structure — is why the practice exists: helping other businesses figure out where automation and AI actually belong in their operations, and just as importantly, where they don't.",
   ],
 };

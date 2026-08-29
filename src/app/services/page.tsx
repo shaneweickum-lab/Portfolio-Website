@@ -165,7 +165,7 @@ export default function ServicesPage() {
   return (
     <div className="mx-auto max-w-5xl px-6 py-16">
       <p className="mb-4 font-mono text-sm uppercase tracking-[0.25em] text-signal">
-        W.P. Solutions
+        Nodylus Automat<span className="text-wonder">/</span>ons
       </p>
       <SectionHeader
         kicker="Work with me"

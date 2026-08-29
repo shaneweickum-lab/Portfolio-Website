@@ -5,7 +5,9 @@ export function SiteFooter() {
     <footer className="mt-24 border-t border-border">
       <div className="mx-auto flex max-w-6xl flex-col gap-4 px-6 py-10 text-sm text-muted sm:flex-row sm:items-center sm:justify-between">
         <p>
-          &copy; {new Date().getFullYear()} <span className="text-wonder">W.P. Solutions</span>.
+          &copy; {new Date().getFullYear()} Nodylus Automat
+          <span className="text-wonder">/</span>
+          ons.
         </p>
         <div className="flex gap-5">
           <Link href="/services" className="hover:text-foreground">
