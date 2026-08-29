@@ -22,15 +22,15 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://shaneweickum.dev"),
   title: {
-    default: "W.P. Solutions",
-    template: "%s · W.P. Solutions",
+    default: "Nodylus Automat/ons",
+    template: "%s · Nodylus Automat/ons",
   },
   description:
-    "Sustainable AI & automation consulting from W.P. Solutions, founded by Shane Weickum — right-sized audits, deterministic automation, AI integration, and custom software for small businesses.",
+    "Sustainable AI & automation consulting from Nodylus Automat/ons, founded by Shane Weickum — right-sized audits, deterministic automation, AI integration, and custom software for small businesses.",
   openGraph: {
-    title: "W.P. Solutions",
+    title: "Nodylus Automat/ons",
     description:
-      "Sustainable AI & automation consulting from W.P. Solutions, founded by Shane Weickum — right-sized audits, deterministic automation, AI integration, and custom software for small businesses.",
+      "Sustainable AI & automation consulting from Nodylus Automat/ons, founded by Shane Weickum — right-sized audits, deterministic automation, AI integration, and custom software for small businesses.",
     type: "website",
   },
 };
