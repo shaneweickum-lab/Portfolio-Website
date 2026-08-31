@@ -1,0 +1,104 @@
+---
+title: "Camera Math Solver"
+summary: "Point a camera at a printed math problem and watch it get solved live -- OCR and evaluation running entirely client-side, no image ever leaves the browser."
+date: "2026-08-31"
+role: "Design & implementation"
+stack: ["Next.js", "Tesseract.js (WASM OCR)", "mathjs", "TypeScript", "Canvas API"]
+status: "shipped"
+tags: ["computer-vision", "client-side-ml"]
+links:
+  - label: "Try the Camera Math Solver"
+    href: "/projects/math-solver"
+---
+
+## What it is
+
+Point your camera at a printed math problem and it gets read, solved, and
+answered on screen -- live, with no network round-trip. It handles plain
+arithmetic (`45 + 55`) and single-variable linear equations (`2x + 3 =
+11`), and it's built to say "I can't solve this" rather than guess when a
+problem is out of scope.
+
+## Why fully client-side
+
+Every interactive project on this site runs entirely in the browser --
+[Narrate](/projects/narrate) dropped a real backend for the same reason,
+and [Air-gapped Transfer](/projects/airgap) never had one to begin with.
+A camera feed is about as sensitive as user input gets, so this one was
+never going to stream frames to a server: [Tesseract.js](https://github.com/naptha/tesseract.js)
+runs the actual Tesseract OCR engine compiled to WebAssembly, and
+[mathjs](https://mathjs.org/) evaluates the recognized expression --
+both inside the same tab that's holding the camera open. Nothing captured
+by the camera is ever sent anywhere.
+
+## Solving without a computer algebra system
+
+Rather than reach for a full symbolic-algebra library to solve `2x + 3 =
+11`, this uses a much smaller trick that only needs numeric evaluation.
+Define `g(x) = lhs(x) - rhs(x)`. If the original equation is linear in
+`x`, `g` is a line, and a line is fully determined by two points: evaluate
+`g` at `x = 0` and `x = 1` to get its intercept and slope, then solve for
+where it crosses zero. A third sample point, `x = 2`, checks the
+linearity assumption itself -- if `g(2)` doesn't land where a line
+through the first two points predicts, the equation isn't actually
+linear (an `x^2` term, for instance), and the solver declines rather than
+returning a wrong answer. The same numeric-only approach also implies
+what it *can't* do: no quadratics, no multiple variables, nothing that
+needs actual symbolic manipulation -- and it says so on the page instead
+of quietly getting them wrong.
+
+## What real OCR actually does to a math expression
+
+Building this against genuine Tesseract output (not idealized fake text)
+surfaced real character-recognition failure modes that shaped the design
+more than anything else:
+
+- **`×` and the letter `x` are genuinely ambiguous.** In most fonts
+  they're nearly the same glyph, and Tesseract will sometimes read a
+  multiplication sign as a lowercase x. Since this solver already needs
+  `x` to unambiguously mean "the unknown," it never tries to guess which
+  one was meant -- `×` is multiplication, `x` is the variable, full stop.
+  Typing or writing a multiplication problem with a bare `x` will get
+  read as an equation with a variable in it, and that's disclosed rather
+  than hidden.
+- **`^` is not reliably recognized.** A plain-text `x^2` sometimes comes
+  back from OCR as `x2`, with the caret silently dropped. Rather than try
+  to guess intent from a bare `x2` (is that `x^2`? `x*2`? a typo?), the
+  solver just fails to evaluate it and reports it as unsupported --
+  wrong in its *reason* (it reads as "not linear" rather than "OCR
+  dropped a character"), but not wrong in its *answer*, which is the
+  property that actually matters.
+- **`/` can merge into an adjacent digit.** A division slash was
+  observed being misread in a way that fused `144 / 12` into `144112`. A
+  charset whitelist restricts what Tesseract is allowed to output, but it
+  can't fix a glyph being misclassified as a different allowed character
+  in the first place.
+
+None of these are bugs in the math -- `mathjs` correctly evaluates
+whatever text it's handed, every time. They're the actual, measured
+behavior of OCR run against a real printed page, and the honest response
+to "this glyph is ambiguous" is to disclose it, not to add a pile of
+heuristic guessing on top that would fail silently and confidently.
+
+## How a read gets accepted
+
+A single camera frame is not trusted the moment it decodes into
+something parseable. The recognized text has to come back byte-identical
+on two consecutive recognition passes before the page displays it as
+an answer -- the same content-based debounce idea used in
+[Air-gapped Transfer's](/projects/airgap) optical receiver, adapted from
+guarding against a mid-transition camera frame to guarding against a
+single noisy OCR read.
+
+## Honest limitations
+
+- Printed text only -- this was not built or tested against handwriting,
+  and Tesseract's general-purpose English model is not tuned for it.
+- Scope is deliberately narrow: arithmetic and single-variable linear
+  equations. Quadratics, systems of equations, and anything needing
+  calculus are out of scope by design, not by oversight.
+- Needs decent lighting and contrast. No deskewing, adaptive thresholding,
+  or perspective correction is applied beyond a basic grayscale/contrast
+  pass -- a page held at a sharp angle or in dim light will read worse.
+- The `×`/`^`/`/` misreads described above are real, observed Tesseract
+  behavior on this project's own test images, not a hypothetical caveat.
