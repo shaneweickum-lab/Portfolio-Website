@@ -8,9 +8,11 @@ import { loadMathOcr, recognizeMathText, type OcrLoadProgress } from "@/lib/math
 import { normalizeMathText, solveMathText, type MathSolveResult } from "@/lib/math-solver";
 
 type CameraStatus = "requesting" | "denied" | "watching";
+type Mode = "live" | "frozen";
 
-const CAPTURE_WIDTH = 640;
-const STABLE_READS_REQUIRED = 2; // consecutive matching reads before an answer is shown, not just the first guess
+const LIVE_CAPTURE_WIDTH = 640;
+const FREEZE_CAPTURE_WIDTH = 1280; // a deliberate freeze isn't time-critical, so it's worth the extra detail
+const STABLE_READS_REQUIRED = 2; // consecutive matching reads before a live answer is shown, not just the first guess
 const CYCLE_DELAY_MS = 150; // gap on top of however long recognize() itself takes
 
 function formatNumber(value: number): string {
@@ -36,17 +38,48 @@ function describeResult(result: MathSolveResult): { headline: string; detail?: s
   }
 }
 
-function cameraHint(cameraStatus: CameraStatus, ocrReady: boolean, liveText: string, hasConfirmed: boolean): string {
+function liveHint(cameraStatus: CameraStatus, ocrReady: boolean, liveText: string, hasSolved: boolean): string {
   if (!ocrReady) return "Loading the OCR engine…";
   if (cameraStatus === "requesting") return "Requesting camera access…";
-  if (hasConfirmed) return "Move to a new problem any time — it updates automatically.";
+  if (hasSolved) return "Move to a new problem any time — it updates automatically.";
   if (liveText.trim().length > 0) return "Reading… hold steady";
-  return "Point the camera at a printed math problem";
+  return "Point the camera at a printed math problem, or freeze a frame for a closer look";
+}
+
+// Captures the current video frame onto both a visible display canvas (an
+// untouched copy, so the user sees exactly what was captured) and a hidden
+// OCR canvas (grayscale + contrast, matching the live loop's preprocessing).
+function captureFrame(
+  video: HTMLVideoElement,
+  displayCanvas: HTMLCanvasElement,
+  ocrCanvas: HTMLCanvasElement,
+  width: number,
+): boolean {
+  if (video.readyState < 2 || video.videoWidth === 0) return false;
+  const aspect = video.videoHeight / video.videoWidth;
+  const height = Math.round(width * aspect);
+
+  displayCanvas.width = width;
+  displayCanvas.height = height;
+  const displayCtx = displayCanvas.getContext("2d");
+  if (!displayCtx) return false;
+  displayCtx.drawImage(video, 0, 0, width, height);
+
+  ocrCanvas.width = width;
+  ocrCanvas.height = height;
+  const ocrCtx = ocrCanvas.getContext("2d");
+  if (!ocrCtx) return false;
+  ocrCtx.filter = "grayscale(1) contrast(1.6)";
+  ocrCtx.drawImage(video, 0, 0, width, height);
+
+  return true;
 }
 
 export function CameraMathSolver() {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const liveCanvasRef = useRef<HTMLCanvasElement>(null); // hidden, live-loop OCR input
+  const freezeDisplayRef = useRef<HTMLCanvasElement>(null); // visible frozen preview
+  const freezeOcrRef = useRef<HTMLCanvasElement>(null); // hidden, frozen-frame OCR input
   const workerRef = useRef<Worker | null>(null);
 
   const [ocrProgress, setOcrProgress] = useState<OcrLoadProgress | null>(null);
@@ -54,8 +87,11 @@ export function CameraMathSolver() {
   const [ocrError, setOcrError] = useState<string | null>(null);
   const [cameraStatus, setCameraStatus] = useState<CameraStatus>("requesting");
   const [cameraError, setCameraError] = useState<string | null>(null);
+  const [mode, setMode] = useState<Mode>("live");
   const [liveText, setLiveText] = useState("");
-  const [confirmed, setConfirmed] = useState<{ normalized: string; result: MathSolveResult } | null>(null);
+  const [solved, setSolved] = useState<{ normalized: string; result: MathSolveResult } | null>(null);
+  const [frozenAnalyzing, setFrozenAnalyzing] = useState(false);
+  const [frozenNoRead, setFrozenNoRead] = useState(false);
 
   // Load the Tesseract.js worker once, independent of camera permission.
   useEffect(() => {
@@ -85,7 +121,9 @@ export function CameraMathSolver() {
     };
   }, []);
 
-  // Request the camera once, independent of OCR load state.
+  // Request the camera once, independent of OCR load state. The stream
+  // keeps running even while a frame is frozen, so re-freezing never needs
+  // to re-request permission or restart the video element.
   useEffect(() => {
     let stream: MediaStream | null = null;
     let cancelled = false;
@@ -121,12 +159,13 @@ export function CameraMathSolver() {
     };
   }, []);
 
-  // The recognize-and-solve loop: only runs once both the camera feed and
-  // the OCR worker are ready, and reschedules itself after each cycle
-  // finishes rather than on a fixed interval, so a slow device never
-  // queues up overlapping recognize() calls.
+  // The continuous recognize-and-solve loop: only runs in live mode, once
+  // both the camera feed and the OCR worker are ready, and reschedules
+  // itself after each cycle finishes rather than on a fixed interval, so a
+  // slow device never queues up overlapping recognize() calls. Freezing a
+  // frame (mode -> "frozen") tears this down via the cleanup below.
   useEffect(() => {
-    if (cameraStatus !== "watching" || !ocrReady) return;
+    if (mode !== "live" || cameraStatus !== "watching" || !ocrReady) return;
 
     let cancelled = false;
     let timeoutHandle: ReturnType<typeof setTimeout> | null = null;
@@ -135,12 +174,12 @@ export function CameraMathSolver() {
 
     async function recognizeOnce() {
       const video = videoRef.current;
-      const canvas = canvasRef.current;
+      const canvas = liveCanvasRef.current;
       const worker = workerRef.current;
       if (!video || !canvas || !worker || video.readyState < 2) return;
 
       const aspect = video.videoWidth > 0 ? video.videoHeight / video.videoWidth : 0.75;
-      const width = CAPTURE_WIDTH;
+      const width = LIVE_CAPTURE_WIDTH;
       const height = Math.round(width * aspect);
       if (canvas.width !== width || canvas.height !== height) {
         canvas.width = width;
@@ -168,7 +207,7 @@ export function CameraMathSolver() {
       }
 
       if (result && pendingCount >= STABLE_READS_REQUIRED) {
-        setConfirmed((prev) => (prev?.normalized === normalized ? prev : { normalized, result }));
+        setSolved((prev) => (prev?.normalized === normalized ? prev : { normalized, result }));
       }
     }
 
@@ -187,24 +226,92 @@ export function CameraMathSolver() {
       cancelled = true;
       if (timeoutHandle !== null) clearTimeout(timeoutHandle);
     };
-  }, [cameraStatus, ocrReady]);
+  }, [mode, cameraStatus, ocrReady]);
 
-  const description = confirmed ? describeResult(confirmed.result) : null;
+  function handleFreeze() {
+    const video = videoRef.current;
+    const displayCanvas = freezeDisplayRef.current;
+    const ocrCanvas = freezeOcrRef.current;
+    const worker = workerRef.current;
+    if (!video || !displayCanvas || !ocrCanvas || !worker) return;
+    if (!captureFrame(video, displayCanvas, ocrCanvas, FREEZE_CAPTURE_WIDTH)) return;
+
+    setMode("frozen");
+    setLiveText("");
+    setSolved(null);
+    setFrozenNoRead(false);
+    setFrozenAnalyzing(true);
+
+    recognizeMathText(worker, ocrCanvas)
+      .then((rawText) => {
+        const trimmed = rawText.trim();
+        setLiveText(trimmed);
+        const result = solveMathText(rawText);
+        if (result) {
+          setSolved({ normalized: normalizeMathText(rawText), result });
+        } else {
+          setFrozenNoRead(true);
+        }
+      })
+      .catch(() => setFrozenNoRead(true))
+      .finally(() => setFrozenAnalyzing(false));
+  }
+
+  function handleResumeLive() {
+    setMode("live");
+    setLiveText("");
+    setSolved(null);
+    setFrozenNoRead(false);
+    setFrozenAnalyzing(false);
+  }
+
+  const description = solved ? describeResult(solved.result) : null;
   const progressPct = ocrProgress ? Math.round(ocrProgress.progress * 100) : 0;
+  const canFreeze = mode === "live" && ocrReady && cameraStatus === "watching";
 
   return (
     <div className="mx-auto flex max-w-xl flex-col items-center px-6 py-10 text-center">
       <SectionHeader
         kicker="Camera Math Solver"
         title="Point your camera at a math problem"
-        description="Recognizes printed arithmetic and single-variable linear equations, and solves them live -- entirely in your browser."
+        description="Recognizes printed arithmetic and single-variable linear equations, and solves them live -- entirely in your browser. Freeze a frame for a steadier, higher-detail read."
         accent="signal"
       />
 
       <div className="relative mt-8 w-full max-w-md overflow-hidden rounded-2xl border border-border">
-        <video ref={videoRef} muted playsInline className="w-full" />
-        <canvas ref={canvasRef} className="hidden" />
+        <video ref={videoRef} muted playsInline className={mode === "live" ? "w-full" : "hidden"} />
+        <canvas ref={freezeDisplayRef} className={mode === "frozen" ? "w-full" : "hidden"} />
+        <canvas ref={liveCanvasRef} className="hidden" />
+        <canvas ref={freezeOcrRef} className="hidden" />
         <div className="pointer-events-none absolute inset-6 rounded-xl border-2 border-dashed border-signal/50" />
+      </div>
+
+      <div className="mt-4 flex gap-3">
+        {mode === "live" ? (
+          <button
+            onClick={handleFreeze}
+            disabled={!canFreeze}
+            className="rounded-full bg-signal px-5 py-2.5 text-sm font-medium text-onaccent transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            Freeze frame
+          </button>
+        ) : (
+          <>
+            <button
+              onClick={handleFreeze}
+              disabled={frozenAnalyzing}
+              className="rounded-full border border-border px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:border-signal/60 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Freeze again
+            </button>
+            <button
+              onClick={handleResumeLive}
+              className="rounded-full bg-signal px-5 py-2.5 text-sm font-medium text-onaccent"
+            >
+              Resume live
+            </button>
+          </>
+        )}
       </div>
 
       {!ocrReady && !ocrError && (
@@ -234,7 +341,13 @@ export function CameraMathSolver() {
       )}
 
       <p className="mt-6 text-sm font-medium text-foreground">
-        {cameraHint(cameraStatus, ocrReady, liveText, confirmed !== null)}
+        {mode === "frozen"
+          ? frozenAnalyzing
+            ? "Analyzing the frozen frame…"
+            : frozenNoRead
+              ? "Couldn't read any math on that frame -- try freezing again with better lighting or focus."
+              : "Frame frozen."
+          : liveHint(cameraStatus, ocrReady, liveText, solved !== null)}
       </p>
 
       {liveText && (
@@ -243,9 +356,9 @@ export function CameraMathSolver() {
         </p>
       )}
 
-      {confirmed && description && (
+      {solved && description && (
         <div className="mt-6 w-full rounded-2xl border border-border bg-surface-muted p-6">
-          <Tag accent={description.accent}>{confirmed.normalized}</Tag>
+          <Tag accent={description.accent}>{solved.normalized}</Tag>
           <p className="mt-3 font-display text-4xl font-medium text-foreground">{description.headline}</p>
           {description.detail && <p className="mt-2 text-sm text-muted">{description.detail}</p>}
         </div>
@@ -255,6 +368,7 @@ export function CameraMathSolver() {
         <p className="font-medium text-foreground">What this can and can&apos;t do</p>
         <ul className="mt-2 flex flex-col gap-1.5">
           <li>— Arithmetic expressions and single-variable linear equations (using &quot;x&quot;), on printed text.</li>
+          <li>— Freezing a frame captures at higher resolution than the live scan, and skips waiting for repeated matching reads -- useful when lighting or a shaky hand is throwing off the live scan.</li>
           <li>— Quadratics, multiple variables, and handwriting are out of scope, and it says so rather than guessing.</li>
           <li>— A lowercase &quot;x&quot; is always read as the variable; use &quot;×&quot; for multiplication.</li>
           <li>— Everything -- the camera feed, OCR, and the math -- runs locally in your browser. Nothing is uploaded anywhere.</li>
