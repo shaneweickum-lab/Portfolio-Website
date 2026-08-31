@@ -2,13 +2,16 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { Worker } from "tesseract.js";
+import type { ImageToTextPipelineType } from "@huggingface/transformers";
 import { SectionHeader } from "@/components/section-header";
 import { Tag } from "@/components/tag";
 import { loadMathOcr, recognizeMathText, type OcrLoadProgress } from "@/lib/math-ocr-engine";
+import { loadHandwritingOcr, recognizeHandwriting, type ModelLoadProgress } from "@/lib/handwriting-ocr-engine";
 import { normalizeMathText, solveMathText, type MathSolveResult } from "@/lib/math-solver";
 
 type CameraStatus = "requesting" | "denied" | "watching";
 type Mode = "live" | "frozen";
+type Engine = "printed" | "handwriting";
 
 const LIVE_CAPTURE_WIDTH = 640;
 const FREEZE_CAPTURE_WIDTH = 1280; // a deliberate freeze isn't time-critical, so it's worth the extra detail
@@ -38,17 +41,26 @@ function describeResult(result: MathSolveResult): { headline: string; detail?: s
   }
 }
 
-function liveHint(cameraStatus: CameraStatus, ocrReady: boolean, liveText: string, hasSolved: boolean): string {
-  if (!ocrReady) return "Loading the OCR engine…";
+function liveHint(
+  engine: Engine,
+  cameraStatus: CameraStatus,
+  ready: boolean,
+  liveText: string,
+  hasSolved: boolean,
+): string {
+  if (!ready) return engine === "printed" ? "Loading the OCR engine…" : "Loading the handwriting model…";
   if (cameraStatus === "requesting") return "Requesting camera access…";
   if (hasSolved) return "Move to a new problem any time — it updates automatically.";
+  if (engine === "handwriting") return "Frame a single handwritten line tightly, then freeze it";
   if (liveText.trim().length > 0) return "Reading… hold steady";
   return "Point the camera at a printed math problem, or freeze a frame for a closer look";
 }
 
 // Captures the current video frame onto both a visible display canvas (an
 // untouched copy, so the user sees exactly what was captured) and a hidden
-// OCR canvas (grayscale + contrast, matching the live loop's preprocessing).
+// OCR canvas (grayscale + contrast, tuned for Tesseract's printed-text
+// engine -- the handwriting engine instead reads the untouched display
+// canvas directly, since that preprocessing isn't calibrated for it).
 function captureFrame(
   video: HTMLVideoElement,
   displayCanvas: HTMLCanvasElement,
@@ -81,19 +93,26 @@ export function CameraMathSolver() {
   const freezeDisplayRef = useRef<HTMLCanvasElement>(null); // visible frozen preview
   const freezeOcrRef = useRef<HTMLCanvasElement>(null); // hidden, frozen-frame OCR input
   const workerRef = useRef<Worker | null>(null);
+  const handwritingRef = useRef<ImageToTextPipelineType | null>(null);
+  const handwritingLoadStartedRef = useRef(false);
 
   const [ocrProgress, setOcrProgress] = useState<OcrLoadProgress | null>(null);
   const [ocrReady, setOcrReady] = useState(false);
   const [ocrError, setOcrError] = useState<string | null>(null);
+  const [handwritingProgress, setHandwritingProgress] = useState<ModelLoadProgress | null>(null);
+  const [handwritingReady, setHandwritingReady] = useState(false);
+  const [handwritingError, setHandwritingError] = useState<string | null>(null);
   const [cameraStatus, setCameraStatus] = useState<CameraStatus>("requesting");
   const [cameraError, setCameraError] = useState<string | null>(null);
+  const [engine, setEngine] = useState<Engine>("printed");
   const [mode, setMode] = useState<Mode>("live");
   const [liveText, setLiveText] = useState("");
   const [solved, setSolved] = useState<{ normalized: string; result: MathSolveResult } | null>(null);
   const [frozenAnalyzing, setFrozenAnalyzing] = useState(false);
   const [frozenNoRead, setFrozenNoRead] = useState(false);
 
-  // Load the Tesseract.js worker once, independent of camera permission.
+  // Load the Tesseract.js worker once, independent of camera permission --
+  // this is the default engine, so it loads eagerly.
   useEffect(() => {
     let cancelled = false;
     const timer = setTimeout(() => {
@@ -121,9 +140,41 @@ export function CameraMathSolver() {
     };
   }, []);
 
-  // Request the camera once, independent of OCR load state. The stream
-  // keeps running even while a frame is frozen, so re-freezing never needs
-  // to re-request permission or restart the video element.
+  // Load the handwriting model lazily, only once the user actually switches
+  // to it -- it's a separate, much larger download than Tesseract, so
+  // nobody using the (default) printed-text engine should pay for it.
+  useEffect(() => {
+    if (engine !== "handwriting" || handwritingLoadStartedRef.current) return;
+    handwritingLoadStartedRef.current = true;
+
+    let cancelled = false;
+    const timer = setTimeout(() => {
+      loadHandwritingOcr((progress) => {
+        if (!cancelled) setHandwritingProgress(progress);
+      })
+        .then((ocr) => {
+          if (cancelled) return;
+          handwritingRef.current = ocr;
+          setHandwritingReady(true);
+        })
+        .catch(() => {
+          if (!cancelled) {
+            setHandwritingError(
+              "Couldn't download the handwriting model. It's fetched from a public CDN on first use, so this usually means a network or ad-blocker issue -- printed text still works normally.",
+            );
+          }
+        });
+    }, 0);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [engine]);
+
+  // Request the camera once, independent of engine/OCR load state. The
+  // stream keeps running even while a frame is frozen, so re-freezing never
+  // needs to re-request permission or restart the video element.
   useEffect(() => {
     let stream: MediaStream | null = null;
     let cancelled = false;
@@ -159,13 +210,15 @@ export function CameraMathSolver() {
     };
   }, []);
 
-  // The continuous recognize-and-solve loop: only runs in live mode, once
-  // both the camera feed and the OCR worker are ready, and reschedules
-  // itself after each cycle finishes rather than on a fixed interval, so a
-  // slow device never queues up overlapping recognize() calls. Freezing a
-  // frame (mode -> "frozen") tears this down via the cleanup below.
+  // The continuous recognize-and-solve loop: printed-text only (the
+  // handwriting model is too slow to run every ~150ms and is
+  // freeze-frame-only), runs in live mode once the camera and Tesseract
+  // worker are ready, and reschedules itself after each cycle finishes
+  // rather than on a fixed interval, so a slow device never queues up
+  // overlapping recognize() calls. Freezing a frame, or switching engines,
+  // tears this down via the cleanup below.
   useEffect(() => {
-    if (mode !== "live" || cameraStatus !== "watching" || !ocrReady) return;
+    if (engine !== "printed" || mode !== "live" || cameraStatus !== "watching" || !ocrReady) return;
 
     let cancelled = false;
     let timeoutHandle: ReturnType<typeof setTimeout> | null = null;
@@ -226,15 +279,20 @@ export function CameraMathSolver() {
       cancelled = true;
       if (timeoutHandle !== null) clearTimeout(timeoutHandle);
     };
-  }, [mode, cameraStatus, ocrReady]);
+  }, [engine, mode, cameraStatus, ocrReady]);
 
   function handleFreeze() {
     const video = videoRef.current;
     const displayCanvas = freezeDisplayRef.current;
     const ocrCanvas = freezeOcrRef.current;
-    const worker = workerRef.current;
-    if (!video || !displayCanvas || !ocrCanvas || !worker) return;
+    if (!video || !displayCanvas || !ocrCanvas) return;
     if (!captureFrame(video, displayCanvas, ocrCanvas, FREEZE_CAPTURE_WIDTH)) return;
+
+    const recognize =
+      engine === "printed"
+        ? workerRef.current && (() => recognizeMathText(workerRef.current!, ocrCanvas))
+        : handwritingRef.current && (() => recognizeHandwriting(handwritingRef.current!, displayCanvas));
+    if (!recognize) return;
 
     setMode("frozen");
     setLiveText("");
@@ -242,7 +300,7 @@ export function CameraMathSolver() {
     setFrozenNoRead(false);
     setFrozenAnalyzing(true);
 
-    recognizeMathText(worker, ocrCanvas)
+    recognize()
       .then((rawText) => {
         const trimmed = rawText.trim();
         setLiveText(trimmed);
@@ -265,9 +323,28 @@ export function CameraMathSolver() {
     setFrozenAnalyzing(false);
   }
 
+  function handleEngineChange(next: Engine) {
+    if (next === engine) return;
+    setEngine(next);
+    setMode("live");
+    setLiveText("");
+    setSolved(null);
+    setFrozenNoRead(false);
+    setFrozenAnalyzing(false);
+  }
+
   const description = solved ? describeResult(solved.result) : null;
-  const progressPct = ocrProgress ? Math.round(ocrProgress.progress * 100) : 0;
-  const canFreeze = mode === "live" && ocrReady && cameraStatus === "watching";
+  const engineReady = engine === "printed" ? ocrReady : handwritingReady;
+  const engineError = engine === "printed" ? ocrError : handwritingError;
+  const loadProgress =
+    engine === "printed"
+      ? ocrProgress
+        ? { status: ocrProgress.status, pct: Math.round(ocrProgress.progress * 100) }
+        : null
+      : handwritingProgress && handwritingProgress.total > 0
+        ? { status: "Downloading model", pct: Math.round((handwritingProgress.loaded / handwritingProgress.total) * 100) }
+        : null;
+  const canFreeze = mode === "live" && cameraStatus === "watching" && engineReady;
 
   return (
     <div className="mx-auto flex max-w-xl flex-col items-center px-6 py-10 text-center">
@@ -278,7 +355,26 @@ export function CameraMathSolver() {
         accent="signal"
       />
 
-      <div className="relative mt-8 w-full max-w-md overflow-hidden rounded-2xl border border-border">
+      <div className="mt-6 inline-flex rounded-full border border-border p-1 text-sm">
+        <button
+          onClick={() => handleEngineChange("printed")}
+          className={`rounded-full px-4 py-1.5 font-medium transition-colors ${
+            engine === "printed" ? "bg-signal text-onaccent" : "text-muted hover:text-foreground"
+          }`}
+        >
+          Printed text
+        </button>
+        <button
+          onClick={() => handleEngineChange("handwriting")}
+          className={`rounded-full px-4 py-1.5 font-medium transition-colors ${
+            engine === "handwriting" ? "bg-signal text-onaccent" : "text-muted hover:text-foreground"
+          }`}
+        >
+          Handwritten (experimental)
+        </button>
+      </div>
+
+      <div className="relative mt-4 w-full max-w-md overflow-hidden rounded-2xl border border-border">
         <video ref={videoRef} muted playsInline className={mode === "live" ? "w-full" : "hidden"} />
         <canvas ref={freezeDisplayRef} className={mode === "frozen" ? "w-full" : "hidden"} />
         <canvas ref={liveCanvasRef} className="hidden" />
@@ -299,7 +395,7 @@ export function CameraMathSolver() {
           <>
             <button
               onClick={handleFreeze}
-              disabled={frozenAnalyzing}
+              disabled={frozenAnalyzing || !engineReady}
               className="rounded-full border border-border px-5 py-2.5 text-sm font-medium text-foreground transition-colors hover:border-signal/60 disabled:cursor-not-allowed disabled:opacity-40"
             >
               Freeze again
@@ -314,23 +410,23 @@ export function CameraMathSolver() {
         )}
       </div>
 
-      {!ocrReady && !ocrError && (
+      {!engineReady && !engineError && (
         <div className="mt-6 w-full">
           <div className="h-1.5 w-full overflow-hidden rounded-full bg-surface-muted">
             <div
               className="h-full rounded-full bg-signal transition-all duration-300"
-              style={{ width: `${progressPct}%` }}
+              style={{ width: `${loadProgress?.pct ?? 0}%` }}
             />
           </div>
           <p className="mt-2 text-xs text-muted">
-            {ocrProgress ? `${ocrProgress.status} (${progressPct}%)` : "Starting…"}
+            {loadProgress ? `${loadProgress.status} (${loadProgress.pct}%)` : "Starting…"}
           </p>
         </div>
       )}
 
-      {ocrError && (
+      {engineError && (
         <p className="mt-6 rounded-lg border border-ember/40 bg-ember/10 px-4 py-2 text-sm text-ember">
-          {ocrError}
+          {engineError}
         </p>
       )}
 
@@ -340,15 +436,17 @@ export function CameraMathSolver() {
         </p>
       )}
 
-      <p className="mt-6 text-sm font-medium text-foreground">
-        {mode === "frozen"
-          ? frozenAnalyzing
-            ? "Analyzing the frozen frame…"
-            : frozenNoRead
-              ? "Couldn't read any math on that frame -- try freezing again with better lighting or focus."
-              : "Frame frozen."
-          : liveHint(cameraStatus, ocrReady, liveText, solved !== null)}
-      </p>
+      {!engineError && (
+        <p className="mt-6 text-sm font-medium text-foreground">
+          {mode === "frozen"
+            ? frozenAnalyzing
+              ? "Analyzing the frozen frame…"
+              : frozenNoRead
+                ? "Couldn't read any math on that frame -- try freezing again with better lighting, framing, or focus."
+                : "Frame frozen."
+            : liveHint(engine, cameraStatus, engineReady, liveText, solved !== null)}
+        </p>
+      )}
 
       {liveText && (
         <p className="mt-2 max-w-sm truncate font-mono text-xs text-muted">
@@ -367,11 +465,12 @@ export function CameraMathSolver() {
       <div className="mt-10 max-w-md text-left text-xs text-muted">
         <p className="font-medium text-foreground">What this can and can&apos;t do</p>
         <ul className="mt-2 flex flex-col gap-1.5">
-          <li>— Arithmetic expressions and single-variable linear equations (using &quot;x&quot;), on printed text.</li>
+          <li>— Arithmetic expressions and single-variable linear equations (using &quot;x&quot;), on printed or handwritten text.</li>
           <li>— Freezing a frame captures at higher resolution than the live scan, and skips waiting for repeated matching reads -- useful when lighting or a shaky hand is throwing off the live scan.</li>
-          <li>— Quadratics, multiple variables, and handwriting are out of scope, and it says so rather than guessing.</li>
+          <li>— Handwriting mode is experimental, freeze-only (no live scan), and works best on a single line framed tightly -- it doesn&apos;t locate text on its own the way the printed-text engine does.</li>
+          <li>— Quadratics and multiple variables are out of scope, and it says so rather than guessing.</li>
           <li>— A lowercase &quot;x&quot; is always read as the variable; use &quot;×&quot; for multiplication.</li>
-          <li>— Everything -- the camera feed, OCR, and the math -- runs locally in your browser. Nothing is uploaded anywhere.</li>
+          <li>— Everything -- the camera feed and OCR -- runs locally in your browser. The handwriting mode downloads its model from a public CDN on first use; nothing you capture is ever uploaded anywhere.</li>
         </ul>
       </div>
     </div>
