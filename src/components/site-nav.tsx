@@ -50,7 +50,7 @@ export function SiteNav() {
             type="button"
             aria-label="Toggle navigation menu"
             onClick={() => setOpen((v) => !v)}
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-foreground"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-border text-foreground"
           >
             {open ? <X size={18} /> : <Menu size={18} />}
           </button>

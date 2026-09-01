@@ -31,7 +31,7 @@ export default function HomePage() {
 
         <div className="relative mx-auto max-w-6xl px-6 py-24 sm:py-32">
           <p className="font-mono text-sm uppercase tracking-[0.25em] text-signal">Shane Weickum</p>
-          <h1 className="mt-4 max-w-3xl font-display text-5xl font-medium tracking-tight text-white [text-shadow:0_2px_16px_rgba(0,0,0,0.7)] sm:text-6xl">
+          <h1 className="mt-4 max-w-3xl font-display text-4xl font-medium tracking-tight text-white [text-shadow:0_2px_16px_rgba(0,0,0,0.7)] sm:text-5xl md:text-6xl">
             {heroLede.title}
           </h1>
           <p className="mt-5 max-w-2xl text-lg text-white/80 [text-shadow:0_1px_10px_rgba(0,0,0,0.7)]">

@@ -77,7 +77,7 @@ export function NarrateReader({
         <button
           onClick={onClose}
           aria-label="Choose another file"
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-border text-muted hover:text-foreground"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-border text-muted hover:text-foreground"
         >
           <X size={16} />
         </button>
