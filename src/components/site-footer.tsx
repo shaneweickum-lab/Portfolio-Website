@@ -9,12 +9,15 @@ export function SiteFooter() {
           <span className="text-wonder">/</span>
           ons.
         </p>
-        <div className="flex gap-5">
-          <Link href="/services" className="hover:text-foreground">
-            Services
+        <div className="flex flex-wrap gap-5">
+          <Link href="/engineering" className="hover:text-foreground">
+            Engineering
           </Link>
           <Link href="/projects" className="hover:text-foreground">
             Case Studies
+          </Link>
+          <Link href="/consulting" className="hover:text-foreground">
+            Consulting
           </Link>
           <Link href="/about" className="hover:text-foreground">
             Get to Know Me

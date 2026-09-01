@@ -22,15 +22,15 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://shaneweickum.dev"),
   title: {
-    default: "Nodylus Automat/ons",
-    template: "%s · Nodylus Automat/ons",
+    default: "Shane Weickum",
+    template: "%s · Shane Weickum",
   },
   description:
-    "Sustainable AI & automation consulting from Nodylus Automat/ons, founded by Shane Weickum — right-sized audits, deterministic automation, AI integration, and custom software for small businesses.",
+    "Shane Weickum is an AI systems engineer specializing in deterministic engineering, small neural networks, and small language models — orchestrating the smallest capability that reliably solves each task instead of defaulting to one large general-purpose model. Also runs Nodylus Automat/ons, a sustainable AI & automation consultancy.",
   openGraph: {
-    title: "Nodylus Automat/ons",
+    title: "Shane Weickum",
     description:
-      "Sustainable AI & automation consulting from Nodylus Automat/ons, founded by Shane Weickum — right-sized audits, deterministic automation, AI integration, and custom software for small businesses.",
+      "AI systems engineer specializing in deterministic engineering, small neural networks, and small language models — orchestrating the smallest capability that reliably solves each task.",
     type: "website",
   },
 };
