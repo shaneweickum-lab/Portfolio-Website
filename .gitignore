@@ -39,6 +39,9 @@ yarn-error.log*
 # generated from skills-source/ at build time
 /public/skills/*.zip
 
+# generated from digital_hero.png at build time (see scripts/generate-og-image.mjs)
+/public/images/og-hero.png
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
