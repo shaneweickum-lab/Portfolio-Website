@@ -358,7 +358,7 @@ export function CameraMathSolver() {
       <div className="mt-6 inline-flex rounded-full border border-border p-1 text-sm">
         <button
           onClick={() => handleEngineChange("printed")}
-          className={`rounded-full px-4 py-1.5 font-medium transition-colors ${
+          className={`whitespace-nowrap rounded-full px-3 py-1.5 font-medium transition-colors sm:px-4 ${
             engine === "printed" ? "bg-signal text-onaccent" : "text-muted hover:text-foreground"
           }`}
         >
@@ -366,11 +366,12 @@ export function CameraMathSolver() {
         </button>
         <button
           onClick={() => handleEngineChange("handwriting")}
-          className={`rounded-full px-4 py-1.5 font-medium transition-colors ${
+          className={`whitespace-nowrap rounded-full px-3 py-1.5 font-medium transition-colors sm:px-4 ${
             engine === "handwriting" ? "bg-signal text-onaccent" : "text-muted hover:text-foreground"
           }`}
         >
-          Handwritten (experimental)
+          <span className="sm:hidden">Handwritten</span>
+          <span className="hidden sm:inline">Handwritten (experimental)</span>
         </button>
       </div>
 

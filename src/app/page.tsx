@@ -1,10 +1,16 @@
+import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { getAllProjects } from "@/lib/content";
 import { ProjectCard } from "@/components/cards";
-import { Tag } from "@/components/tag";
-import { howIWork, ourApproach, philosophy, positioning, slogan, tagline } from "@/data/services";
+import { heroLede, ocp, positioning } from "@/data/engineering-philosophy";
+
+export const metadata: Metadata = {
+  title: { absolute: "Shane Weickum — AI Systems Engineer" },
+  description:
+    "AI systems engineer specializing in deterministic engineering, small neural networks, and small language models. Portfolio, case studies, and engineering philosophy.",
+};
 
 export default function HomePage() {
   const projects = getAllProjects().slice(0, 3);
@@ -24,89 +30,52 @@ export default function HomePage() {
         <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-background via-background/10 to-transparent" />
 
         <div className="relative mx-auto max-w-6xl px-6 py-24 sm:py-32">
-          <p className="font-mono text-sm uppercase tracking-[0.25em] text-signal">
-            Nodylus Automat<span className="text-wonder">/</span>ons
-          </p>
-          <div className="mt-4">
-            <Tag accent="ok">Sustainable AI Solutions</Tag>
-          </div>
-          <h1 className="mt-4 max-w-3xl font-display text-5xl font-medium tracking-tight text-white [text-shadow:0_2px_16px_rgba(0,0,0,0.7)] sm:text-6xl">
-            Sustainable AI & Automation Consulting
+          <p className="font-mono text-sm uppercase tracking-[0.25em] text-signal">Shane Weickum</p>
+          <h1 className="mt-4 max-w-3xl font-display text-4xl font-medium tracking-tight text-white [text-shadow:0_2px_16px_rgba(0,0,0,0.7)] sm:text-5xl md:text-6xl">
+            {heroLede.title}
           </h1>
-          <div className="mt-5 max-w-xl">
-            <p className="font-display text-xl italic text-white [text-shadow:0_1px_10px_rgba(0,0,0,0.7)]">
-              &ldquo;{slogan}&rdquo;
-            </p>
-            <div className="my-3 h-px w-16 bg-wonder" />
-            <p className="font-mono text-sm uppercase tracking-[0.2em] text-ember [text-shadow:0_1px_10px_rgba(0,0,0,0.85)]">
-              {tagline}
-            </p>
-          </div>
-          <p className="mt-6 max-w-2xl text-lg text-white/80 [text-shadow:0_1px_10px_rgba(0,0,0,0.7)]">
-            {positioning}
+          <p className="mt-5 max-w-2xl text-lg text-white/80 [text-shadow:0_1px_10px_rgba(0,0,0,0.7)]">
+            {positioning.statement}
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
             <Link
-              href="/intake"
+              href="/projects"
               className="inline-flex items-center gap-2 rounded-full bg-signal px-5 py-3 text-sm font-medium text-onaccent transition-opacity hover:opacity-90"
             >
-              Work with me
+              See my work
               <ArrowRight size={16} />
             </Link>
             <Link
-              href="/projects"
+              href="/engineering"
               className="inline-flex items-center gap-2 rounded-full border border-white/30 px-5 py-3 text-sm font-medium text-white transition-colors hover:border-signal/60 hover:text-signal"
             >
-              See the case studies
+              Read my engineering philosophy
               <ArrowRight size={16} />
             </Link>
           </div>
         </div>
       </section>
 
+      {/* Engineering philosophy teaser */}
       <section className="mx-auto max-w-6xl px-6 py-20">
-        <div className="rounded-2xl border border-ok/30 bg-gradient-to-br from-ok/[0.04] to-surface-muted p-10">
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-ok">{ourApproach.kicker}</p>
-          <h2 className="mt-3 font-display text-2xl font-medium text-foreground">{ourApproach.title}</h2>
-          <p className="mt-4 max-w-2xl text-sm text-muted">{ourApproach.intro}</p>
-          <ul className="mt-6 flex max-w-3xl flex-col gap-3">
-            {ourApproach.points.map((point) => (
-              <li key={point} className="relative pl-5 text-sm text-muted">
-                <span className="absolute left-0 text-ok">—</span>
-                {point}
-              </li>
+        <div className="rounded-2xl border border-signal/30 bg-gradient-to-br from-signal/[0.05] to-surface-muted p-10">
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-signal">{heroLede.kicker}</p>
+          <h2 className="mt-3 font-display text-2xl font-medium text-foreground">{ocp.definition}</h2>
+          <p className="mt-4 max-w-2xl text-sm text-muted">{ocp.explanation}</p>
+          <p className="mt-5 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[11px] uppercase tracking-[0.08em] text-faint">
+            {ocp.flow.map((step, i) => (
+              <span key={step} className="flex items-center gap-2">
+                <span className={i === 0 ? "text-signal" : "text-muted"}>{step}</span>
+                {i < ocp.flow.length - 1 && <span className="text-[var(--accent-dim)]">→</span>}
+              </span>
             ))}
-          </ul>
-          <p className="mt-6 max-w-2xl border-l-2 border-ok pl-4 text-sm font-medium text-foreground">
-            {ourApproach.closing}
-          </p>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-6 py-20">
-        <div className="rounded-2xl border border-border bg-surface-muted p-10">
-          <h2 className="font-display text-2xl font-medium text-foreground">{philosophy.title}</h2>
-          <p className="mt-4 max-w-2xl text-sm text-muted">{philosophy.paragraphs[0]}</p>
-          <p className="mt-4 max-w-2xl border-l-2 border-ember pl-4 text-sm font-medium text-foreground">
-            {philosophy.closing}
           </p>
           <Link
-            href="/services"
+            href="/engineering"
             className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-signal"
           >
-            How I work <ArrowRight size={14} />
+            Read the full philosophy <ArrowRight size={14} />
           </Link>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-6 py-12">
-        <div className="grid gap-6 sm:grid-cols-5">
-          {howIWork.map((item) => (
-            <div key={item.step}>
-              <p className="font-mono text-sm text-signal">{item.step}</p>
-              <p className="mt-2 font-medium text-foreground">{item.title}</p>
-            </div>
-          ))}
         </div>
       </section>
 
@@ -121,8 +90,8 @@ export default function HomePage() {
             </Link>
           </div>
           <p className="mt-2 max-w-2xl text-sm text-muted">
-            Real, shipped systems — the same engineering judgment behind the
-            consulting work.
+            Real, shipped systems — deterministic engineering, small models, and AI used only where it earns its
+            place.
           </p>
           <div className="mt-6 grid gap-5 sm:grid-cols-3">
             {projects.map((project) => (
@@ -133,20 +102,36 @@ export default function HomePage() {
       )}
 
       <section className="mx-auto max-w-6xl px-6 py-20">
-        <div className="rounded-2xl border border-border bg-surface-muted p-10 text-center">
-          <h2 className="font-display text-2xl font-medium text-foreground">
-            Want the fuller picture?
-          </h2>
-          <p className="mx-auto mt-3 max-w-xl text-sm text-muted">
-            Background, skills, and the experience behind the automation and
-            AI integration work.
-          </p>
-          <Link
-            href="/about"
-            className="mt-6 inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-3 text-sm font-medium text-background"
-          >
-            Get to know me <ArrowRight size={16} />
-          </Link>
+        <div className="grid gap-6 sm:grid-cols-2">
+          <div className="rounded-2xl border border-border bg-surface-muted p-10">
+            <h2 className="font-display text-2xl font-medium text-foreground">
+              Want the fuller picture?
+            </h2>
+            <p className="mt-3 max-w-xl text-sm text-muted">
+              Background, skills, and the experience behind the engineering work.
+            </p>
+            <Link
+              href="/about"
+              className="mt-6 inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-3 text-sm font-medium text-background"
+            >
+              Get to know me <ArrowRight size={16} />
+            </Link>
+          </div>
+          <div className="rounded-2xl border border-border bg-surface-muted p-10">
+            <h2 className="font-display text-2xl font-medium text-foreground">
+              Looking to work together?
+            </h2>
+            <p className="mt-3 max-w-xl text-sm text-muted">
+              I also run Nodylus Automat/ons, a consultancy applying this same engineering judgment to
+              automation and AI for small businesses.
+            </p>
+            <Link
+              href="/consulting"
+              className="mt-6 inline-flex items-center gap-2 rounded-full border border-border px-5 py-3 text-sm font-medium text-foreground hover:border-signal/60 hover:text-signal"
+            >
+              Visit Consulting <ArrowRight size={16} />
+            </Link>
+          </div>
         </div>
       </section>
     </div>

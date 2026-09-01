@@ -8,7 +8,7 @@ import { sustainabilityShort } from "@/data/services";
 
 export const metadata: Metadata = {
   title: "Get to Know Me",
-  description: "Background and experience behind the sustainable AI and automation consulting work.",
+  description: "Background and experience behind the AI systems engineering and automation consulting work.",
 };
 
 export default function AboutPage() {
@@ -29,6 +29,13 @@ export default function AboutPage() {
       <div className="mt-8 border-l-2 border-ok pl-4 text-sm text-muted">
         {sustainabilityShort}
       </div>
+
+      <Link
+        href="/engineering"
+        className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-signal"
+      >
+        Read my Engineering Philosophy <ArrowRight size={14} />
+      </Link>
 
       <section className="mt-16">
         <h2 className="font-display text-2xl font-medium text-foreground">
@@ -79,7 +86,7 @@ export default function AboutPage() {
         </h2>
         <div className="mt-6 flex flex-wrap justify-center gap-4">
           <Link
-            href="/services"
+            href="/consulting"
             className="inline-flex items-center gap-2 rounded-full bg-signal px-5 py-3 text-sm font-medium text-onaccent"
           >
             Work with me <ArrowRight size={16} />

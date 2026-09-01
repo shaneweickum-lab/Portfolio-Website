@@ -9,9 +9,11 @@ import {
   consultingCategory,
   featuredService,
   howIWork,
+  ourApproach,
   philosophy,
   positioning,
   serviceCategories,
+  slogan,
   smallBusinessNote,
   tagline,
   technologyPrinciple,
@@ -19,7 +21,7 @@ import {
 } from "@/data/services";
 
 export const metadata: Metadata = {
-  title: "Services & Pricing",
+  title: "Consulting — Services & Pricing",
   description: positioning,
 };
 
@@ -168,12 +170,13 @@ export default function ServicesPage() {
         Nodylus Automat<span className="text-wonder">/</span>ons
       </p>
       <SectionHeader
-        kicker="Work with me"
+        kicker="Consulting"
         title="Services & Pricing"
         description={positioning}
         accent="signal"
       />
-      <p className="mt-4 font-mono text-sm uppercase tracking-[0.2em] text-ember">{tagline}</p>
+      <p className="mt-4 max-w-xl font-display text-lg italic text-foreground">&ldquo;{slogan}&rdquo;</p>
+      <p className="mt-2 font-mono text-sm uppercase tracking-[0.2em] text-ember">{tagline}</p>
       <p className="mt-6 max-w-2xl text-sm text-muted">
         Every engagement starts with understanding, not a sales pitch. If you don&apos;t know
         which tier fits, start with the consultation — it tells you which of the others (if any)
@@ -187,6 +190,24 @@ export default function ServicesPage() {
           </span>
         ))}
       </p>
+
+      {/* Our Approach — sustainability positioning for the consulting practice */}
+      <div className="mt-10 rounded-2xl border border-ok/30 bg-gradient-to-br from-ok/[0.04] to-surface-muted p-10">
+        <p className="font-mono text-xs uppercase tracking-[0.2em] text-ok">{ourApproach.kicker}</p>
+        <h2 className="mt-3 font-display text-2xl font-medium text-foreground">{ourApproach.title}</h2>
+        <p className="mt-4 max-w-2xl text-sm text-muted">{ourApproach.intro}</p>
+        <ul className="mt-6 flex max-w-3xl flex-col gap-3">
+          {ourApproach.points.map((point) => (
+            <li key={point} className="relative pl-5 text-sm text-muted">
+              <span className="absolute left-0 text-ok">—</span>
+              {point}
+            </li>
+          ))}
+        </ul>
+        <p className="mt-6 max-w-2xl border-l-2 border-ok pl-4 text-sm font-medium text-foreground">
+          {ourApproach.closing}
+        </p>
+      </div>
 
       {/* 01 — Consulting / 02 — Automation: the core engagement ladder */}
       <div className="mt-10">
@@ -254,6 +275,12 @@ export default function ServicesPage() {
               <p className="mt-5 max-w-2xl border-l-2 border-ok pl-4 text-sm font-medium text-foreground">
                 {technologyPrinciple.closing}
               </p>
+              <Link
+                href="/engineering"
+                className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-ok"
+              >
+                How I think about this as an engineer <ArrowRight size={14} />
+              </Link>
             </div>
           )}
         </div>
