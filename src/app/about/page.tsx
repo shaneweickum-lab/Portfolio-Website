@@ -8,7 +8,7 @@ import { sustainabilityShort } from "@/data/services";
 
 export const metadata: Metadata = {
   title: "Get to Know Me",
-  description: "Background and experience behind the AI systems engineering and automation consulting work.",
+  description: "Background and experience behind the sustainable AI engineering and automation consulting work.",
 };
 
 export default function AboutPage() {
@@ -34,7 +34,7 @@ export default function AboutPage() {
         href="/engineering"
         className="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-signal"
       >
-        Read my Engineering Philosophy <ArrowRight size={14} />
+        Read my Philosophy <ArrowRight size={14} />
       </Link>
 
       <section className="mt-16">

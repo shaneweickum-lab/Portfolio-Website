@@ -14,102 +14,28 @@ links:
 
 ## Why I built this
 
-I wanted a pathfinding demo that couldn't be mistaken for a canned one —
-no hand-placed maze, no algorithm that secretly already knows the
-answer. Every maze here is generated fresh, the start and goal are
-yours to choose, and the five solving algorithms actually run against
-whatever gets generated. It's an homage to
-[Micromouse](https://en.wikipedia.org/wiki/Micromouse), the robotics
-competition that's been running since 1972: small autonomous robots
-racing to the center of a 16×16 maze they've never seen before, using
-nothing but onboard sensors.
+I wanted a maze demo that couldn't be faked — no maze designed ahead of time, no algorithm secretly already knowing the answer. Every maze here is generated fresh on the spot, you choose the start and goal, and every solving method actually has to work its way through whatever gets generated. It's a nod to [Micromouse](https://en.wikipedia.org/wiki/Micromouse), a robotics competition running since 1972, where small autonomous robots race to the center of a maze they've never seen before, using only their own onboard sensors.
 
 ## What it is
 
-- **Manual play** — pick a start and goal, then drive a mouse through
-  the maze yourself with arrow keys, WASD, or on-screen buttons on
-  mobile.
-- **Algorithm mode** — watch BFS, A*, DFS, Flood Fill, or a
-  right-hand-rule Wall Follower solve the same maze, with the search
-  itself visualized before the final path is walked.
-- **Blind vs. God mode** — the real point of the project. God mode
-  shows the whole maze, the way most "maze solver" demos quietly
-  assume. Blind mode only reveals the walls of the cell you (or the
-  algorithm) currently occupy, exactly like a real Micromouse robot's
-  sensors — building its own map through actual exploration before
-  attempting a timed speed run.
-- **Size and difficulty** — Small (16×16, matching the real competition
-  spec), Medium (24×24), and Large (32×32), each at Easy through
-  Expert.
-- **Classic Micromouse mode** — locks in the 16×16 grid, a corner
-  start walled on three sides, and a center goal, matching the real
-  rules as closely as a browser demo reasonably can.
+- **Manual play** — pick a start and goal, then guide a mouse through the maze yourself with arrow keys, WASD, or on-screen buttons on mobile.
+- **Automatic mode** — watch a handful of different strategies solve the same maze on their own, with the search itself shown step by step before the final path is walked.
+- **Blind vs. all-seeing mode** — the real heart of the project. All-seeing mode shows the whole maze at once, the way most maze demos quietly assume you can. Blind mode only reveals the walls right around you (or the algorithm) at any moment, exactly like a real Micromouse robot's sensors — building its own understanding of the maze through actual exploration, not a shortcut.
+- **Size and difficulty** — three sizes and several difficulty levels, each one guaranteed solvable.
+- **Classic Micromouse mode** — matches the real competition's setup as closely as a browser demo reasonably can.
 
-## Difficulty is a braid, not a wall count
+## Difficulty isn't about more walls
 
-My first instinct was "harder difficulty = more walls." That's
-actually backwards: a *perfect* maze (exactly one path between any two
-cells) has a wall count that's entirely determined by grid size —
-`(width-1) × (height-1)` internal walls, no more, no fewer. You can't
-add walls without either disconnecting a cell or breaking the
-single-path guarantee.
+My first instinct was "harder difficulty means more walls." That's actually backwards — a maze with exactly one path between any two points already has as many walls as it can possibly have. What actually changes between difficulty levels is how many extra shortcuts and loops get opened up. Fewer loops means a maze with one "true" path and lots of dead ends (harder); more loops means more forgiving alternate routes (easier). Every difficulty level is guaranteed to have a solution — there's no way to accidentally generate a maze with no way through.
 
-What actually varies is the reverse: **braiding**, which starts from
-that maximum-wall perfect maze and knocks down a percentage of dead
-ends to open up loops and alternate routes. Since braiding only ever
-*adds* passages to an already-fully-connected maze, every difficulty
-tier is mathematically guaranteed solvable — there's no way to
-accidentally generate a maze with no path through it. Expert (0%
-braid) is the pure perfect maze real Micromouse competitions use;
-Easy, Medium, and Hard progressively add more loops, more forgiving
-alternate routes, and fewer of the classic dead-end backtracks.
+## Why blind mode is the real test
 
-## Blind vs. God, and why not every algorithm gets both
+Some solving strategies assume they can already see the whole maze — running them "blind" would mean quietly handing them the answer and pretending otherwise, which is exactly the kind of shortcut this project exists to avoid. So blind mode is only offered for the strategies that are actually built to explore step by step and learn the maze as they go — the same way a real robot has to.
 
-BFS, A*, and DFS are graph-search algorithms — they fundamentally
-assume the whole graph is already known. Running them "blind" would
-mean quietly handing them the answer and pretending otherwise, which
-is exactly the kind of shortcut this project exists to avoid. So God
-mode offers all five algorithms; Blind mode offers only Flood Fill and
-Wall Follower, the two that are actually capable of exploring first —
-because those are the two real autonomous mice use.
+One of those strategies is the actual, historically standard approach real Micromouse robots use: it keeps track of how far every explored spot is from the goal, updates that as it senses new walls, and always moves toward a closer spot. In blind mode, it explores until it finds the goal once, then runs the fastest route it discovered along the way.
 
-**Flood Fill** is the actual, historically standard Micromouse
-algorithm: it maintains a distance-to-goal value for every cell it's
-discovered, recomputed as new walls are sensed, and always steps
-toward a lower value. In Blind mode it runs the real two-phase
-structure — explore until it reaches the goal once, then attempt a
-"speed run" using the best route it found, with looped backtracking
-trimmed out.
-
-**Wall Follower** (the right-hand rule) has a real, well-documented
-failure mode I measured rather than assumed: it only works reliably on
-a *simply connected* maze — one with no loops. On a pure perfect maze
-(Expert difficulty), it always reaches the goal, corner start or
-center goal, no exceptions, across hundreds of test mazes. But
-introduce loops and put the goal in the center — the actual Micromouse
-setup — and its success rate collapses as braiding increases:
-
-| Braid % | Success rate (center goal, 24×24) |
-|---|---|
-| 15% | 78% |
-| 35% | 47% |
-| 60% | 18% |
-| 100% | 7% |
-
-A loop can enclose a region the algorithm's fixed hand-on-the-wall rule
-never enters — it's a real limitation of the technique, not a bug in
-this implementation, and the UI surfaces it honestly (with the actual
-step count) rather than hiding a failed run.
+A simpler strategy — always turning the same direction at every fork — was also tested carefully rather than assumed to work. It turns out to work perfectly on mazes with no loops at all, but its success rate drops sharply as more loops get added and the goal sits in the center, since a loop can hide a whole area it will simply never wander into. That's a real, honest limit of that particular approach, not a bug — and the app shows it plainly rather than hiding a failed run.
 
 ## What's next
 
-Phases 1 and 2 (procedural generation, manual play, all five
-algorithms, blind/god modes) are what's live here. The plan's third
-phase is more ambitious: connecting a small language model — the same
-one behind an experimental on-device training project for
-[FreeLoom](/projects/freeloom) — and using it to play the maze under
-the exact same blind, one-cell-at-a-time constraint the algorithms and
-a human player already share. That phase hasn't started; it needs its
-own scoping once the model's actual current state is in front of me,
-rather than guessed at.
+What's live today covers generated mazes, manual play, several automatic strategies, and both blind and all-seeing modes. Looking ahead, I'd like to add an AI-driven player that has to explore under the exact same blind, step-by-step limits as everyone else — no peeking at the whole maze, no shortcuts. That's still on the roadmap and hasn't been scoped yet.

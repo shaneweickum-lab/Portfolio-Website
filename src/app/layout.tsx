@@ -26,11 +26,11 @@ export const metadata: Metadata = {
     template: "%s · Shane Weickum",
   },
   description:
-    "Shane Weickum is an AI systems engineer specializing in deterministic engineering, small neural networks, and small language models — orchestrating the smallest capability that reliably solves each task instead of defaulting to one large general-purpose model. Also runs Nodylus Automat/ons, a sustainable AI & automation consultancy.",
+    "Shane Weickum is a sustainable AI engineer focused on edge computing and energy efficiency — building technology that's efficient, reliable, and easy on the planet. Also runs Nodylus Automat/ons, a sustainable AI & automation consultancy for small businesses.",
   openGraph: {
     title: "Shane Weickum",
     description:
-      "AI systems engineer specializing in deterministic engineering, small neural networks, and small language models — orchestrating the smallest capability that reliably solves each task.",
+      "A sustainable AI engineer focused on edge computing and energy efficiency — building technology that's efficient, reliable, and easy on the planet.",
     type: "website",
   },
 };

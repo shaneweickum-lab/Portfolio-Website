@@ -7,7 +7,7 @@ import { Menu, X } from "lucide-react";
 import { Logo } from "@/components/logo";
 
 const NAV_ITEMS = [
-  { href: "/engineering", label: "Engineering" },
+  { href: "/engineering", label: "Philosophy" },
   { href: "/projects", label: "Case Studies" },
   { href: "/consulting", label: "Consulting" },
   { href: "/about", label: "Get to Know Me" },

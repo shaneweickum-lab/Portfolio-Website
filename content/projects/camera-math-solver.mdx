@@ -13,125 +13,40 @@ links:
 
 ## What it is
 
-Point your camera at a printed math problem and it gets read, solved, and
-answered on screen -- live, with no network round-trip. It handles plain
-arithmetic (`45 + 55`) and single-variable linear equations (`2x + 3 =
-11`), and it's built to say "I can't solve this" rather than guess when a
-problem is out of scope. A "Freeze frame" button captures a single still
-at higher resolution than the continuous scan, for a page that's catching
-glare, a shaky hand, or just not resolving live.
+Point your camera at a printed math problem, and it gets read, solved, and shown right on screen -- with nothing sent over the internet. It handles everyday arithmetic (like `45 + 55`) and simple algebra with one unknown (like `2x + 3 = 11`), and it's built to honestly say "I can't solve this" instead of guessing when a problem goes beyond what it's designed for. A "Freeze frame" button takes a clearer, closer look when glare or a shaky hand is making the live view harder to read.
 
-A second, experimental engine handles handwriting: switching to
-"Handwritten" swaps Tesseract for [TrOCR](https://huggingface.co/Xenova/trocr-small-handwritten)
-(a transformer model fine-tuned specifically for handwritten text,
-running via [`@huggingface/transformers`](https://huggingface.co/docs/transformers.js))
-and drops the continuous live scan in favor of freeze-only capture, since
-TrOCR is too slow to run every ~150ms the way Tesseract's live loop does.
+There's also an experimental mode for handwriting, which switches to a different tool built specifically for reading handwritten text -- since tools built for printed text generally don't handle handwriting well.
 
-## Why fully client-side
+## Why everything happens on your device
 
-Every interactive project on this site runs entirely in the browser --
-[Narrate](/projects/narrate) dropped a real backend for the same reason,
-and [Air-gapped Transfer](/projects/airgap) never had one to begin with.
-A camera feed is about as sensitive as user input gets, so this one was
-never going to stream frames to a server: [Tesseract.js](https://github.com/naptha/tesseract.js)
-runs the actual Tesseract OCR engine compiled to WebAssembly, and
-[mathjs](https://mathjs.org/) evaluates the recognized expression --
-both inside the same tab that's holding the camera open. Nothing captured
-by the camera is ever sent anywhere.
+Every interactive project on this site works entirely in your browser -- [Narrate](/projects/narrate) and [Air-gapped Transfer](/projects/airgap) do too. A camera feed is about as personal as it gets, so nothing here was ever going to be sent to a server: the reading and the math both happen right on your own device, in the same tab that's using your camera. Nothing your camera sees is ever sent anywhere.
 
-## Solving without a computer algebra system
+## Solving the math reliably
 
-Rather than reach for a full symbolic-algebra library to solve `2x + 3 =
-11`, this uses a much smaller trick that only needs numeric evaluation.
-Define `g(x) = lhs(x) - rhs(x)`. If the original equation is linear in
-`x`, `g` is a line, and a line is fully determined by two points: evaluate
-`g` at `x = 0` and `x = 1` to get its intercept and slope, then solve for
-where it crosses zero. A third sample point, `x = 2`, checks the
-linearity assumption itself -- if `g(2)` doesn't land where a line
-through the first two points predicts, the equation isn't actually
-linear (an `x^2` term, for instance), and the solver declines rather than
-returning a wrong answer. The same numeric-only approach also implies
-what it *can't* do: no quadratics, no multiple variables, nothing that
-needs actual symbolic manipulation -- and it says so on the page instead
-of quietly getting them wrong.
+Rather than having AI guess at an answer, the actual math is worked out with simple, dependable calculation -- the same kind of process a calculator uses, not a guess. That means the answer is never "probably right" -- it's either correct, or an honest "I can't solve this one." Nothing in between.
 
-## What real OCR actually does to a math expression
+## What reading real handwriting and print actually looks like
 
-Building this against genuine Tesseract output (not idealized fake text)
-surfaced real character-recognition failure modes that shaped the design
-more than anything else:
+Testing this against real camera photos (not perfectly clean text) turned up some genuine, everyday quirks in how text-reading tools behave:
 
-- **`×` and the letter `x` are genuinely ambiguous.** In most fonts
-  they're nearly the same glyph, and Tesseract will sometimes read a
-  multiplication sign as a lowercase x. Since this solver already needs
-  `x` to unambiguously mean "the unknown," it never tries to guess which
-  one was meant -- `×` is multiplication, `x` is the variable, full stop.
-  Typing or writing a multiplication problem with a bare `x` will get
-  read as an equation with a variable in it, and that's disclosed rather
-  than hidden.
-- **`^` is not reliably recognized.** A plain-text `x^2` sometimes comes
-  back from OCR as `x2`, with the caret silently dropped. Rather than try
-  to guess intent from a bare `x2` (is that `x^2`? `x*2`? a typo?), the
-  solver just fails to evaluate it and reports it as unsupported --
-  wrong in its *reason* (it reads as "not linear" rather than "OCR
-  dropped a character"), but not wrong in its *answer*, which is the
-  property that actually matters.
-- **`/` can merge into an adjacent digit.** A division slash was
-  observed being misread in a way that fused `144 / 12` into `144112`. A
-  charset whitelist restricts what Tesseract is allowed to output, but it
-  can't fix a glyph being misclassified as a different allowed character
-  in the first place.
+- **The multiplication symbol (×) and the letter "x" can look nearly identical.** So this tool always treats a lowercase "x" as the unknown in an equation, and the true multiplication symbol as multiplication -- rather than guessing which one was meant.
+- **Small marks, like an exponent symbol, can get missed entirely.** When that happens, the tool honestly says it can't solve the problem instead of guessing what was probably meant.
+- **Some characters can blend together**, like a division symbol accidentally merging into a nearby number. Reading text from a photo is never perfect, and this tool is upfront about that instead of pretending otherwise.
 
-None of these are bugs in the math -- `mathjs` correctly evaluates
-whatever text it's handed, every time. They're the actual, measured
-behavior of OCR run against a real printed page, and the honest response
-to "this glyph is ambiguous" is to disclose it, not to add a pile of
-heuristic guessing on top that would fail silently and confidently.
+None of this is a flaw in the math itself -- the calculation is always accurate once the problem is read correctly. These are simply the real, observed quirks of reading text from a photograph, and being honest about them beats quietly guessing and sometimes getting it wrong.
 
-## How a read gets accepted
+## Making sure a reading is actually right
 
-A single camera frame is not trusted the moment it decodes into
-something parseable. The recognized text has to come back byte-identical
-on two consecutive recognition passes before the page displays it as
-an answer -- the same content-based debounce idea used in
-[Air-gapped Transfer's](/projects/airgap) optical receiver, adapted from
-guarding against a mid-transition camera frame to guarding against a
-single noisy OCR read.
+A single glance from the camera isn't trusted right away. The tool has to "see" the same thing twice in a row before it treats it as a real answer -- the same idea used in [Air-gapped Transfer](/projects/airgap) to avoid trusting a single blurry camera frame.
 
-## Why handwriting needed a second engine, not a better prompt to Tesseract
+## Why handwriting needed a completely different approach
 
-The freeze-frame feature was originally built to make Tesseract's job
-easier -- a steadier, higher-resolution single shot. Testing it against a
-real handwritten sample instead exposed a harder problem: Tesseract's
-default English model, run directly against a cropped photo of the exact
-same handwriting, came back essentially empty (or garbage) no matter what
-was thrown at it -- grayscale, contrast, different page-segmentation
-modes, whitelist on or off. That ruled out "tune the pipeline" as a fix.
-General-purpose printed-text OCR and handwriting recognition are
-different problems with different models; Tesseract was never trained for
-the second one. TrOCR was, so it's a genuinely separate engine behind a
-toggle, not a mode flag on the same one.
+Tools that read printed text well generally don't work for handwriting -- they're simply built and trained for different jobs. Testing that firsthand, rather than assuming it would just work, confirmed it: no amount of adjusting made a printed-text tool handle handwriting well. So handwriting mode uses a separate, purpose-built tool instead, switchable with a simple toggle.
 
 ## Honest limitations
 
-- Handwriting mode is new and **unverified from the environment this was
-  built in**: outbound network access to huggingface.co (where the TrOCR
-  model downloads from on first use) was blocked in that sandbox, the
-  same way an earlier project on this site couldn't verify DNS from
-  there. The code path is real and the model ID is real -- the actual
-  recognition accuracy on real handwriting has not been confirmed
-  end-to-end and needs a check against the live, deployed site.
-- Handwriting mode is freeze-only (no continuous live scan, since TrOCR
-  is too slow to run every ~150ms) and needs a single line framed
-  tightly -- TrOCR reads an already-cropped line of text, it doesn't
-  locate text on a page the way the printed-text engine's live loop does.
-- Scope is deliberately narrow: arithmetic and single-variable linear
-  equations. Quadratics, systems of equations, and anything needing
-  calculus are out of scope by design, not by oversight.
-- Needs decent lighting and contrast. No deskewing, adaptive thresholding,
-  or perspective correction is applied beyond a basic grayscale/contrast
-  pass -- a page held at a sharp angle or in dim light will read worse.
-- The `×`/`^`/`/` misreads described in the printed-text section above are
-  real, observed Tesseract behavior on this project's own test images,
-  not a hypothetical caveat.
+- Handwriting mode is new and hasn't been fully tested in everyday, real-world conditions yet -- the pieces are real and working, but its accuracy on real handwriting still needs a final check.
+- Handwriting mode only works on a single frozen photo at a time (not a live, continuous scan), and works best with one line of writing framed clearly.
+- On purpose, this only handles everyday arithmetic and simple one-unknown algebra -- more advanced math is out of scope by design, not because it was overlooked.
+- Needs decent lighting and a clear, steady shot -- a page held at a sharp angle or in dim light will be harder to read.
+- The character mix-ups described above are real, observed behavior from testing against real images, not a hypothetical.

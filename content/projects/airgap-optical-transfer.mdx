@@ -16,89 +16,27 @@ links:
 
 ## Why I built this
 
-I wanted a project that couldn't be mistaken for a tutorial. Most
-portfolio projects are variations on the same handful of shapes — a CRUD
-app, a dashboard, a chatbot wrapper. I went looking for a problem
-unconventional enough that solving it well would say something about how
-I think, not just what frameworks I know: air-gapped file transfer,
-using nothing but a screen and a camera, with no network at all.
+I wanted to build something genuinely different — not another app, but a real demonstration of problem-solving: sending a file between two devices using nothing but light. No Wi-Fi, no Bluetooth, no network at all.
 
-The technique itself isn't new — optical and acoustic data-over-air
-techniques go back decades in research and niche commercial products.
-The point was never to invent the concept. It was to pick a real,
-nontrivial systems problem, architect a correct solution to it myself,
-and execute that architecture to a standard I'd actually stand behind —
-using Claude Code as my implementation partner throughout, the same way
-I'd use any serious engineering tool. I made the calls on the erasure
-coding strategy, the homography approach, and what "verified" had to
-mean before I'd call any of it done; Claude Code did a lot of the
-typing, and pushed back or caught bugs often enough that it earned the
-trust to keep doing more of it.
+This isn't a brand-new idea — sending data through light or sound has shown up in research and specialty products for years. The point wasn't to invent something new. It was to take on a real, tricky problem and build a solid, working solution to a standard I'd actually stand behind — with Claude Code as my building partner the whole way, the same way I'd use any good tool.
 
 ## What it is
 
-Two devices, zero network. One device (the sender) flickers a grid of
-colors on its screen; another device (the receiver) points a camera at
-that screen and reconstructs the original file — no Bluetooth, no Wi-Fi,
-no pairing. Purely light.
+Two devices, no network between them. One screen flickers a pattern of colors; a camera on another device watches that screen and rebuilds the original file from what it sees — purely from light, no wireless connection involved.
 
-## Why this is hard
+## Why this is tricky
 
-Consumer cameras and screens aren't built to talk to each other. The
-camera's clock and the screen's refresh are completely unsynchronized;
-auto-exposure and auto-white-balance actively fight against stable color
-classification; and there's no return channel at all — the sender has no
-idea whether anything it's showing is actually being received. Every part
-of this project exists to solve one piece of that problem:
+Screens and cameras aren't really built to "talk" to each other this way. Lighting shifts, a camera is never held perfectly still or straight, and there's no way for the receiving device to ask the sender to repeat anything it missed. Solving that came down to a few key ideas:
 
-- **Framing & geometry** — the sender's screen is divided into an 8x8
-  grid of colored cells plus four corner fiducial markers. The receiver
-  locates those markers in its camera frame and solves an exact 4-point
-  homography (a hand-rolled linear solve, not a least-squares
-  approximation) to correct for the camera not being perfectly
-  perpendicular to the screen. A fifth marker, deliberately excluded from
-  the homography solve, exists purely to cross-check it — if the solved
-  transform doesn't correctly predict where that marker actually is, the
-  frame is thrown out rather than trusted.
-- **Color robustness** — auto-exposure and white-balance drift over the
-  course of a transfer, so the receiver doesn't trust fixed color targets.
-  Fixed reference swatches on screen are re-sampled every frame and used
-  to calibrate what "each palette color actually looks like right now"
-  before classifying anything else.
-- **No return channel, so no retransmission** — reliability comes from a
-  rateless erasure code (a GF(2) linear fountain code) instead. The file
-  is split into blocks; the sender loops through them and then keeps
-  generating random linear combinations indefinitely. The receiver
-  accumulates whatever it manages to capture — order doesn't matter, and
-  neither does the exact set of drops — and solves for the original file
-  with incremental Gauss-Jordan elimination the moment it has enough
-  independent equations. A block can be fully recovered mid-transfer, long
-  before the whole file is done.
-- **Debounce over trust** — a single camera frame captured mid-transition
-  between two symbols is a real failure mode (rolling shutter, timing
-  jitter). Rather than trust any single frame, the receiver requires two
-  consecutive frames to decode to *identical* content before accepting a
-  symbol at all.
+- **Keeping the picture straight** — the receiving camera works out how the screen is angled from where it's sitting and corrects for it automatically, so the pattern still reads correctly even when the camera isn't held perfectly straight-on.
+- **Adjusting for lighting** — since lighting and camera settings drift over the course of a transfer, the system keeps checking a few known reference colors on screen and adjusts what it expects to see, rather than assuming the lighting stays constant.
+- **No "please repeat that" option** — since there's no way to ask the sender to resend anything, the file is broken into small pieces and sent so the receiver can rebuild the whole thing from any large-enough set of pieces it manages to catch — not necessarily all of them, and not in any particular order.
+- **Not trusting a single glance** — a camera can accidentally catch a blurry, in-between frame. Rather than trust any single frame, the system waits until it sees the exact same thing twice in a row before accepting it as real.
 
-## Current scope
+## What's next
 
-Optical only, for now — the same core pipeline (fountain code, framing,
-one-way broadcast) is designed to extend to an ultrasound channel
-(speaker → microphone) later, without redesigning the erasure coding
-layer. Realistic throughput is small-file territory (text, keys, small
-images) — that's a property of the physical channel, not a shortcoming of
-the approach.
+Right now this works with light only. The plan is to eventually add a second version that uses sound instead — a speaker and a microphone, built on the same underlying idea. Because of how this kind of transfer works, it's best suited to small files: think a text file or a small image, not a movie.
 
 ## Honest limitation
 
-The full pipeline — real file upload, real canvas rendering, real
-browser pixel capture, real fiducial detection, homography, color
-classification, debounce, CRC, and fountain decode — has been verified
-end-to-end in an actual browser, reconstructing files exactly, including
-a case recovered entirely from repair symbols with zero systematic
-symbols captured. What hasn't been verified yet is a real camera and a
-real screen in an uncontrolled room: actual lighting, hand tremor, and
-real webcam auto-exposure behavior are the remaining open risk. The
-receiver's live diagnostics (markers found, alignment status,
-reprojection error) exist specifically to make that failure mode visible
-rather than silent, whenever it's tried on real hardware.
+The full process — uploading a real file, displaying it on screen, and reading it back through an actual camera in a browser — has been tested and verified from end to end, including a case where the file was fully rebuilt without ever catching the "first" pieces of the transfer. What hasn't been tested yet is a real camera and screen in an ordinary, imperfect room: real lighting, a shaky hand, and unpredictable camera behavior are the open questions. The receiving screen shows its own status live — whether it's found the sender's screen, how well-aligned it is — specifically so any problems show up clearly instead of failing silently once it's tried in the real world.
