@@ -336,6 +336,7 @@ export const privateAiCategory = {
       price: "Custom",
       priceNote: "scoped by workload",
       ctaLabel: "Join the waitlist",
+      ctaHref: "/waitlist",
       details: [
         "AI trained and adjusted specifically for how your business works",
         "Connected directly to your own documents and systems for accurate answers",
