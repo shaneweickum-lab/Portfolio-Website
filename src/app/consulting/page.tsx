@@ -33,6 +33,7 @@ type LadderTier = {
   priceNote: string;
   timeline: string;
   ctaLabel: string;
+  ctaHref?: string;
   details: string[];
   accent?: "signal" | "ember";
   proof?: { label: string; description: string; href: string };
@@ -45,6 +46,7 @@ type CompactTier = {
   price: string;
   priceNote: string;
   ctaLabel: string;
+  ctaHref?: string;
   details: string[];
   proof?: { label: string; description: string; href: string };
   sustainable?: boolean;
@@ -97,7 +99,7 @@ function ServiceCard({ tier }: { tier: CompactTier }) {
         <p className="font-display text-lg font-semibold text-foreground">{tier.price}</p>
         <p className="mt-0.5 font-mono text-[10px] uppercase tracking-wide text-faint">{tier.priceNote}</p>
         <Link
-          href="/intake"
+          href={tier.ctaHref || "/intake"}
           className="mt-2.5 inline-block border-b border-[var(--accent-dim)] pb-0.5 font-mono text-[11px] uppercase tracking-wide text-signal transition-colors hover:text-ember"
         >
           {tier.ctaLabel} →
@@ -153,7 +155,7 @@ function TierRow({ tier, flagship = false }: { tier: LadderTier; flagship?: bool
         <p className="font-display text-2xl font-semibold text-foreground">{tier.price}</p>
         <p className="mt-1 font-mono text-[10.5px] uppercase tracking-wide text-faint">{tier.priceNote}</p>
         <Link
-          href="/intake"
+          href={tier.ctaHref || "/intake"}
           className="mt-3 inline-block border-b border-[var(--accent-dim)] pb-0.5 font-mono text-[11.5px] uppercase tracking-wide text-signal transition-colors hover:text-ember"
         >
           {tier.ctaLabel} →
