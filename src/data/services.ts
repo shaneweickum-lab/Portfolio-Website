@@ -9,22 +9,22 @@ export const ourApproach = {
   kicker: "Our Approach",
   title: "Sustainable, by practice — not by claim",
   intro:
-    "Most AI consulting defaults to the biggest model available, billed by the token, provisioned on demand. It works, but it's wasteful — most business problems don't need a frontier model, they need the right one, sized for the job.",
+    "A lot of AI consulting defaults to the biggest, most powerful AI available, no matter the task, using far more computing power (and electricity) than the job needs. It works, but it's wasteful — most business problems just need the right amount of technology, not the most.",
   points: [
-    "Models are sized to the task. A 1B–7B parameter model, not a frontier API call, for work that doesn't need frontier-scale reasoning — classification, extraction, routing, summarization, the actual bulk of what small businesses need AI for.",
-    "One base model, trained carefully, reused across every client. Each engagement adds a lightweight adapter on top rather than training a new model from scratch. Less compute spent per client, not more.",
-    "Compute lives on owned hardware, not elastic cloud infrastructure spun up and torn down per project.",
-    "Automation comes first where automation is enough. AI gets used where judgment is genuinely required — not by default, everywhere, because it's available.",
+    "AI is sized to the task. A small, efficient AI model — not a giant one — handles the everyday work most small businesses actually need: sorting information, answering questions, organizing data, and similar tasks.",
+    "One well-built foundation, reused and lightly customized for every client, instead of building something new and energy-hungry from scratch each time.",
+    "Computing runs on equipment we own and control, not constantly rented from a large cloud provider.",
+    "Simple, reliable automation comes first wherever it's enough on its own. AI only gets brought in where real judgment is genuinely needed — not just because it's available.",
   ],
   closing:
-    "The result: builds that sometimes take longer than a rushed cloud-first shop would quote — and outcomes that don't carry the compute cost, or the price tag, of solving a small problem with large-scale infrastructure.",
+    "The result: work that sometimes takes a little longer than a rushed, cloud-first shop would quote — and results that don't carry the extra cost, or the environmental footprint, of using more technology than a small problem actually needs.",
 };
 
 export const sustainabilityShort =
-  "Sustainable AI, in practice: right-sized models instead of default frontier APIs, one base model reused per client instead of retrained per project, and compute that lives on owned hardware instead of elastic cloud spend. Sometimes slower. Always built to last.";
+  "Sustainable AI, in practice: right-sized, efficient AI instead of defaulting to the biggest option, one solid foundation reused for every client instead of starting over each time, and computing that runs on equipment we own instead of constant cloud spending. Sometimes slower. Always built to last.";
 
 export const sustainabilityTimelineNote =
-  "Timelines reflect sustainable build practices — right-sized models trained carefully once, not the fastest possible cloud-compute sprint. If speed matters more than footprint for your project, say so during intake and we'll scope accordingly.";
+  "Timelines reflect sustainable, energy-conscious build practices — done carefully once, not rushed through on maximum cloud power. If speed matters more than that to you, just say so during intake and we'll scope accordingly.";
 
 export const capabilityFlow = [
   "Consult",
@@ -81,23 +81,22 @@ const auditService = {
 
 const deterministicAutomationService = {
   sectionLabel: "Build",
-  title: "Deterministic Automation",
+  title: "Reliable Automation",
   accent: "ember" as const,
   audienceLine: "For defined, repetitive work that needs to run the same way every time.",
   price: "from $4,200",
   priceNote: "project-based",
   timeline: "2–6 weeks",
   ctaLabel: "Get a quote",
-  summary: "Reliable automation for predictable work — no LLM where none is needed.",
+  summary: "Dependable automation for predictable, repetitive work — no AI where it isn't needed.",
   details: [
-    "APIs, webhooks, scheduled jobs, and rules engines",
-    "Forms, integrations, and traditional software workflows",
-    "Built for exact reproducibility, not just plausible output",
+    "Connections between your existing tools, scheduled tasks, and simple rule-based logic",
+    "Forms, integrations, and everyday software workflows",
+    "Built to work the same, correct way every single time",
   ],
   proof: {
     label: "FreeLoom",
-    description:
-      "its classify/retrieve/compose pipeline is local, deterministic, and testable without a network call — by design.",
+    description: "runs entirely on straightforward, predictable logic — no AI guesswork involved, by design.",
     href: "/projects/freeloom",
   },
 };
@@ -312,7 +311,7 @@ export const modernizationCategory = {
 export const privateAiCategory = {
   number: "06",
   title: "Private & Local AI",
-  blurb: "AI capability that stays within infrastructure you control, sized to the problem it's actually solving.",
+  blurb: "AI that runs on equipment you control, sized appropriately for the problem it's actually solving.",
   layout: "grid" as const,
   tiers: [
     {
@@ -323,24 +322,24 @@ export const privateAiCategory = {
       priceNote: "scoped after consultation",
       ctaLabel: "Explore deployment",
       details: [
-        "Local AI deployment, private assistants, and internal knowledge systems",
-        "Retrieval-augmented generation (RAG) over your own documents",
-        "AI workstation/server configuration and model optimization",
+        "AI that runs on equipment you control, including private assistants and internal knowledge tools",
+        "Search-and-answer tools that work directly from your own documents",
+        "Setup and fine-tuning of the AI hardware itself, so it runs smoothly",
       ],
     },
     {
-      title: "Custom Small Language Models",
+      title: "Custom AI, Sized for Your Business",
       sustainable: true,
       comingSoon: true,
       audienceLine:
-        "Business-specific AI systems built on appropriately sized models — not the largest model available. Waiting on dedicated training/inference hardware before taking this on — get in touch to be first in line once it's available.",
+        "AI built specifically around your business — sized appropriately, not oversized just because a bigger option exists. Waiting on the right hardware before taking this on — get in touch to be first in line once it's available.",
       price: "Custom",
       priceNote: "scoped by workload",
       ctaLabel: "Join the waitlist",
       details: [
-        "Domain adaptation, LoRA adapters, and tool calling on top of a base SLM",
-        "RAG and context compilation tied into your own systems",
-        "Sized to the actual workload — model size is determined by the problem, not marketed as the product",
+        "AI trained and adjusted specifically for how your business works",
+        "Connected directly to your own documents and systems for accurate answers",
+        "Sized to the actual job — the model size is decided by the problem, never used as a selling point",
       ],
     },
   ],
@@ -363,7 +362,7 @@ export const technologyPrinciple = {
     "Energy & compute efficiency",
   ],
   closing:
-    "If a deterministic workflow can solve the problem more reliably and efficiently than an AI system, we use the deterministic workflow.",
+    "If a simpler, more predictable process can solve the problem just as well as AI — and more reliably and efficiently — that's what we use.",
 };
 
 export const supportCategory = {
@@ -394,8 +393,8 @@ export const supportCategory = {
       ctaLabel: "Get a quote",
       details: [
         "Workflow and automation performance review",
-        "AI usage analysis — prompt/system optimization, model selection, cost reduction",
-        "Replacing unreliable AI workflows with deterministic automation where that's the better fit",
+        "A closer look at how your AI is set up, with adjustments to improve accuracy and cut costs",
+        "Replacing unreliable AI with simpler, more predictable automation where that's the better fit",
       ],
     },
   ],

@@ -14,54 +14,26 @@ links:
 
 ## What it is
 
-A tool I built for myself first: drop in a manuscript, have it read back
-to you. Listening to your own writing catches things your eyes skim past
-— awkward rhythm, repeated words, sentences that don't actually say what
-you meant. It lives right here on this site at
-[/projects/narrate](/projects/narrate).
+A tool I built for myself first: drop in a manuscript, have it read back to you. Listening to your own writing catches things your eyes tend to skim past — awkward rhythm, repeated words, sentences that don't quite say what you meant. It lives right here on this site at [/projects/narrate](/projects/narrate).
 
 ## How it works
 
-Entirely client-side — nothing is uploaded anywhere:
+Everything happens right in your browser — nothing is ever uploaded anywhere:
 
-- **Parsing** — `.txt` read directly, `.md` parsed with `marked`'s lexer
-  (code blocks skipped), `.docx` parsed with `mammoth.js`. All in the
-  browser.
-- **Narration, two ways**:
-  - **Device voice** — the [Web Speech API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Speech_API)
-    reads each paragraph aloud instantly, using whatever voices are already
-    installed on your device.
-  - **Better voice** — an opt-in upgrade to [Kokoro-82M](https://huggingface.co/onnx-community/Kokoro-82M-v1.0-ONNX),
-    an Apache-2.0, 82-million-parameter neural TTS model that runs 100%
-    locally via [`kokoro-js`](https://www.npmjs.com/package/kokoro-js)
-    (Transformers.js + ONNX Runtime Web/WASM) — no server, no per-request
-    API cost. It's a one-time model download, cached in the browser
-    afterward, with a live progress readout and a graceful fallback to the
-    device voice if the download can't complete.
-- Both engines share the same play/pause/skip-by-paragraph transport, which
-  is what makes this useful for proofreading rather than just playback.
+- **Reading your file** — text, Markdown, and Word documents are all read directly on your device.
+- **Two ways to listen**:
+  - **Your device's voice** — reads each paragraph back instantly, using whatever voice is already built into your computer or phone.
+  - **A better voice, if you want it** — an optional upgrade to a small, efficient AI voice model that runs entirely on your own device. No server, no ongoing cost, and no waiting on a distant data center. It downloads once, is remembered afterward, and shows its progress honestly along the way — falling back gracefully to your device's own voice if the download doesn't finish.
+- Both options share the same play, pause, and skip-by-paragraph controls, which is what makes this genuinely useful for proofreading instead of just playback.
 
 ## The path here
 
-This started as a standalone FastAPI + Piper TTS + python-docx backend
-that rendered a downloadable MP3 — real, working code, still in git
-history. Getting it actually deployed (a persistent host, volumes, Docker)
-turned into its own project before the product itself could be tried, so
-it became a fully client-side Web Speech API tool instead — no backend to
-deploy at all. It was originally built as its own standalone installable
-PWA, then folded into this site as a page once that separation stopped
-paying for itself. The neural-voice upgrade came from asking a follow-up
-question honestly: is there something better than the Web Speech API that
-still keeps the "no server, no paid API" constraint? Kokoro answered yes.
+This started life as a more complicated, server-based version. Getting a server reliably up and running turned into its own project before the tool itself could even be tried — so I rebuilt it to run entirely on-device instead, with no server to set up or maintain at all. That change also happened to be the more efficient, sustainable way to build it: a small, well-chosen AI voice model beat needing a server running around the clock.
 
 ## Formats
 
-**.txt**, **.md**, and **.docx** today. PDF is a straightforward addition
-later. `.pages` and Google Docs are intentionally out of scope — both
-convert cleanly to formats already supported.
+Text files, Markdown, and Word documents work today. PDF support is a natural next step. A couple of other document formats are intentionally left out for now, since they convert cleanly into formats already supported.
 
 ## What's next
 
-PDF support, and possibly an opt-in "export to MP3" feature later,
-reviving the Piper-based backend for anyone who wants a downloadable file
-instead of in-browser playback.
+PDF support, and possibly an optional "save as an audio file" feature down the line, for anyone who'd rather have a downloadable file than listen right in the browser.

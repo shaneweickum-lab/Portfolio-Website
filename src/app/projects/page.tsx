@@ -7,7 +7,7 @@ import { getAllProjects } from "@/lib/content";
 
 export const metadata: Metadata = {
   title: "Case Studies",
-  description: "Real, shipped systems — the engineering judgment behind the automation and AI integration consulting work.",
+  description: "Real, working projects — built simply, efficiently, and to actually last.",
 };
 
 export default function ProjectsPage() {
@@ -18,7 +18,7 @@ export default function ProjectsPage() {
       <SectionHeader
         kicker="Proof of work"
         title="Case Studies"
-        description="Real, shipped systems — agentic tooling, deterministic automation, and infrastructure built to actually run in production. The same judgment behind the consulting work."
+        description="Real, working projects — built simply, kept efficient, and made to actually hold up. The same care that goes into every consulting project."
         accent="signal"
       />
 

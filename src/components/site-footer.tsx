@@ -11,7 +11,7 @@ export function SiteFooter() {
         </p>
         <div className="flex flex-wrap gap-5">
           <Link href="/engineering" className="hover:text-foreground">
-            Engineering
+            Philosophy
           </Link>
           <Link href="/projects" className="hover:text-foreground">
             Case Studies

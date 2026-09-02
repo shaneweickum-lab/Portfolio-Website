@@ -14,67 +14,18 @@ links:
 
 ## What it is
 
-Real learning, formally recorded. Families teaching outside a
-conventional classroom — homeschooling, unschooling, "wildschooling" —
-still sometimes need a record that reads as formal: a grant or ESA
-compliance check, a college application, an evaluator who wants
-something that looks like a transcript. FreeLoom turns games, projects,
-and family activities into structured class entries that roll up into a
-real GPA and a downloadable, shareable transcript. Pre-launch as a
-public product; the app itself is live for provisioned family accounts,
-currently at v0.5.6.
+Real learning, recorded the right way. Families teaching outside a conventional classroom — homeschooling, unschooling, "wildschooling" — still sometimes need a record that looks official: for a grant, a scholarship program, a college application, or an evaluator who wants something that reads like a real transcript. FreeLoom turns everyday games, projects, and family activities into proper class entries that add up to a real GPA and a shareable, downloadable transcript. It's pre-launch as a public product, but already live and working for the families using it today.
 
-## The interesting engineering
+## The thoughtful engineering behind it
 
-**The Learning Log has no external AI API in its request path, on
-purpose.** A parent describes an activity in plain language, and a
-four-stage local, deterministic pipeline turns it into a formal class
-entry with its own reasoning shown alongside it:
+**No AI service is ever called to turn an activity into a class entry, on purpose.** A parent describes what their kid did in plain language, and a simple, dependable process turns that into a proper class entry — with its reasoning shown right alongside it, so nothing feels like a black box. If it isn't confident about something, it hands that decision back to the parent rather than guessing.
 
-1. **Classify** against a hand-curated knowledge base of known
-   games/platforms, falling back to keyword clustering.
-2. **Retrieve** — if that only produced a generic guess, search the
-   student's own accepted history for a similar past entry using
-   feature-hashed vectors and cosine similarity via `pgvector` — no
-   neural embedding model involved.
-3. **Compose** real prose from hand-authored fragments matched to the
-   activity, rather than generating text fresh each time.
-4. **Confidence check** — anything not confident enough gets resolved by
-   the parent directly instead of shipping a weak guess.
+That was a deliberate choice: a feature can feel smart without needing to call on a big AI service behind the scenes every time. It keeps this part of the app fast, dependable, private, and easy to test — a genuinely different (and more sustainable) tradeoff than the usual default of reaching for AI everywhere.
 
-That's a deliberate architectural bet: "AI-sounding feature" doesn't
-have to mean "LLM call in the hot path." It makes the pipeline fully
-local, deterministic, and testable without a network dependency — a
-meaningfully different tradeoff than the obvious "just call an API"
-default.
+**The privacy and security model is built for a genuinely sensitive use case** — a family's education records for their kids. Every family's data stays strictly separated from every other family's by design. On the rare occasion the support team needs to help troubleshoot something, access has to be explicitly approved by the parent first, and it automatically expires a short time later — never open-ended, and never without the parent's say-so.
 
-**The security model is built for a genuinely sensitive use case** — a
-family's education records, with an admin team that legitimately needs
-occasional access to help debug. Every table is Row-Level-Security
-scoped to the owning account, with exactly two narrow, deliberate
-escapes, both `SECURITY DEFINER` functions rather than a service-role
-bypass:
-
-- A public transcript share link, gated by the transcript id itself
-  being the unguessable capability.
-- **Consent-gated, time-boxed admin access** — an admin can request
-  read-only access to a specific family's account; the parent gets a
-  notification and has to explicitly approve it; approval auto-expires
-  one hour later, re-checked on every call rather than relying on a
-  separate expiry cron. A `BEFORE UPDATE` trigger enforces that a
-  request can only ever move `pending → approved/denied` or
-  `approved → revoked` — never any other transition — and computes the
-  expiry server-side regardless of what the client sends.
-
-Small correctness detail worth naming: credit totals are summed in
-integer hundredths, not floats, so a transcript's GPA and credit hours
-can't quietly drift from accumulated rounding error.
+One small, careful detail worth mentioning: grades and credit totals are calculated in a way that avoids the tiny rounding errors that can quietly creep into other systems over time, so a transcript's numbers always add up exactly.
 
 ## Why this shape
 
-Education records for kids are the kind of data where "probably fine"
-security isn't good enough, and where a chatbot-style feature that
-occasionally hallucinates a subject or credit value is actually
-unacceptable, not just embarrassing. Both the pipeline and the access
-model are built around that constraint rather than the more common
-build-fast-relax-later default.
+Education records for kids are the kind of information where "probably secure enough" isn't good enough, and where an AI feature that occasionally gets a subject or a grade wrong isn't just embarrassing — it's genuinely unacceptable. Both the way activities get recorded and the way access is controlled were built around that standard from the start, rather than moving fast and tightening things up later.

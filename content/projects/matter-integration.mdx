@@ -14,50 +14,16 @@ links:
 
 ## Why I built this
 
-Every other interactive piece on this site — Narrate, Airgap, Maze
-Runner — is entirely self-contained. Open the page, everything runs in
-your browser, no external dependency, nothing that can go down but the
-site itself. This one is different on purpose: it's the first project
-here with a real hardware dependency, because "Hardware & IoT
-Integration" is a service I actually offer, and the honest way to prove
-that is to connect something real, not simulate it.
+Every other interactive project on this site runs entirely in your browser, with nothing outside it that could go down. This one is different on purpose — it's the first project here that connects to a real, physical device, because helping businesses connect their physical equipment to their software is something I actually offer, and the honest way to prove that works is to connect something real instead of faking it.
 
 ## What it is
 
-Three pieces:
+Three simple pieces working together: this page (which talks directly to the next piece from your browser, nothing hidden), a small local program on my own home network that speaks directly to a real smart plug, and a secure tunnel that lets this page reach that program safely from anywhere, without exposing my home network to the internet.
 
-- **This page** — client-only, same as everything else here. It has no
-  backend of its own; it talks directly to the bridge below from your
-  browser.
-- **A local bridge** (`matter-bridge/` in this repo) — a small Node.js
-  process using [matter.js](https://github.com/project-chip/matter.js)
-  that speaks Matter directly to a real smart plug on my home network:
-  commission once, then read/write its OnOff cluster on every
-  connection.
-- **A Cloudflare Tunnel** — gives that local process a stable public
-  HTTPS address without exposing my home network directly, and without
-  a third-party relay service in between.
+## Why it's only on sometimes, not all the time
 
-## Why it's opt-in, not 24/7
-
-This isn't a limitation dressed up as a feature — it's the actual
-engineering answer to "how do you let the public internet flip a switch
-on a device in your house without that being a bad idea." The bridge
-only runs when I start it. When it's not running, this page says so
-honestly rather than faking a live demo. When it is running, a rate
-limiter and a 15-second auto-off timer mean no single visitor — or
-script — can do anything worse than turn a lamp on for fifteen seconds.
-
-## What made it hard
-
-Filled in once the bridge has actually run against real hardware —
-worth writing from what happened, not what I expected to happen.
+This isn't a shortcut dressed up as a feature — it's the genuinely responsible answer to "how do you let visitors flip a switch on a real device in someone's house without that being a bad idea." The connection only runs when I turn it on. When it's off, this page says so plainly instead of faking a live demo. When it is on, safety limits mean no visitor can do anything more than briefly turn a lamp on or off.
 
 ## Honest limitations
 
-This section gets written last, after real verification, not before —
-see `matter-bridge/README.md` for the current, specific list of what's
-confirmed working (the controller runtime, storage, and API shapes,
-checked against the real installed matter.js types) versus what still
-needs a real plug to prove (the commissioning handshake itself). This
-page stays out of production (`draft: true`) until that list is empty.
+This section gets written last, after everything has actually been tested against the real device — not written ahead of time based on what I expect to happen. This page stays hidden from the main site until that testing is complete.
