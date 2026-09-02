@@ -123,7 +123,7 @@ export default function HomePage() {
             </h2>
             <p className="mt-3 max-w-xl text-sm text-muted">
               I also run Nodylus Automat/ons, helping small businesses use automation and AI thoughtfully —
-              without the cost or waste of oversized systems.
+              sized to what they actually need, never more than that.
             </p>
             <Link
               href="/consulting"

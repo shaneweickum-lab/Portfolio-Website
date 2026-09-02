@@ -3,13 +3,13 @@ export const tagline = "Right tool, Right task, Real value.";
 export const slogan = "We build solutions for your problems like magic.";
 
 export const positioning =
-  "Sustainable AI & Automation Consulting — helping small businesses work smarter with right-sized automation and AI, without the cost, complexity, or waste of oversized systems.";
+  "Sustainable AI & Automation Consulting — helping small businesses work smarter with right-sized automation and AI, without the cost or complexity of using more than they actually need.";
 
 export const ourApproach = {
   kicker: "Our Approach",
   title: "Sustainable, by practice — not by claim",
   intro:
-    "A lot of AI consulting defaults to the biggest, most powerful AI available, no matter the task, using far more computing power (and electricity) than the job needs. It works, but it's wasteful — most business problems just need the right amount of technology, not the most.",
+    "A lot of AI consulting defaults to the biggest, most powerful AI available, no matter the task, using far more computing power — and electricity — than the job actually needs. It works, but it isn't thoughtful. I'd rather take the time to find the right amount of technology for your business, sized and used with intention, than hand you the same oversized solution as everyone else.",
   points: [
     "AI is sized to the task. A small, efficient AI model — not a giant one — handles the everyday work most small businesses actually need: sorting information, answering questions, organizing data, and similar tasks.",
     "One well-built foundation, reused and lightly customized for every client, instead of building something new and energy-hungry from scratch each time.",
@@ -476,9 +476,9 @@ export const howIWork = [
 export const philosophy = {
   title: "Not Everything Needs AI",
   paragraphs: [
-    "AI is incredibly powerful — but it isn't the answer to every business problem. Sometimes the best solution is a simple automation. Sometimes it's an API integration. Sometimes it's custom software. Sometimes AI can transform a workflow. And sometimes the best decision is to leave a process alone.",
-    "My job is to determine which is which. I help businesses build technology strategies around value, reliability, scalability, and cost — rather than adopting technology simply because it's new.",
-    "The goal isn't to automate everything. The goal is to build a business that operates better.",
+    "AI is incredibly powerful — used well, it can genuinely change how a business runs. But it isn't the answer to every problem, and I'd rather tell you that upfront than let you find out later. Sometimes the best solution is a simple automation. Sometimes it's an API integration. Sometimes it's custom software. Sometimes AI really can transform a workflow. And sometimes the best decision is to leave a process alone.",
+    "My job is to figure out which is which, honestly. I help businesses build technology strategies around real value, reliability, and cost — not around what's new or impressive-sounding.",
+    "The goal isn't to automate everything. The goal is to build a business that runs a little better, and that you feel a little better about, too.",
   ],
   closing:
     "Technology should eliminate unnecessary work — not unnecessary people. When AI isn't the best tool for the job, I won't recommend it.",

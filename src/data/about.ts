@@ -1,8 +1,8 @@
 export const bio = {
   headline: "Shane Weickum — a sustainable AI engineer, building with care.",
   intro: [
-    "I'm an AI engineer who spends my time building smart, efficient technology — the kind that solves real problems without wasting computing power or making things more complicated than they need to be. I'd rather pick the right tool for the job than build the biggest or flashiest one.",
-    "That same instinct — take something complicated and make it simple — is also why Nodylus Automat/ons exists: a consultancy where I help other businesses figure out where automation and AI actually make sense for them, and just as importantly, where they don't.",
+    "I'm an AI engineer, and honestly, what I love most is building technology that just works — quietly, efficiently, and without asking for more than it needs to get the job done right. I'd rather spend the extra time finding the right tool for the job than reach for the biggest or flashiest one out of habit.",
+    "That same instinct — take something complicated and make it feel simple — is also why Nodylus Automat/ons exists: a consultancy where I help other businesses figure out where automation and AI genuinely make sense for them, and just as importantly, where they don't. I care about getting that answer right more than I care about selling a bigger project.",
   ],
 };
 

@@ -1,16 +1,16 @@
 export const positioning = {
   title: "Sustainable AI Engineer",
   statement:
-    "I build AI and technology that's efficient, reliable, and easy on the planet — using only as much computing power as a problem actually needs, running it as close to home as possible, and never reaching for something bigger or flashier than the job calls for.",
+    "I build AI and technology that's efficient, reliable, and easy on the planet — choosing exactly as much computing power as a problem calls for, running it as close to home as I can, and reaching for something bigger and more powerful when that's genuinely the right call, not just the easy one.",
   closing:
-    "My goal isn't to build the biggest or most impressive-sounding AI system. It's to build the right one — something that works well, costs less to run, and doesn't waste energy doing it.",
+    "My goal isn't to build the biggest or most impressive-sounding AI system. It's to build the right one — something that works well, that I'm proud to stand behind, and that treats the energy and resources it uses like they actually matter. Because they do.",
 };
 
 export const heroLede = {
   kicker: "My Philosophy",
-  title: "Good technology doesn't have to be big, expensive, or wasteful.",
+  title: "Good technology doesn't have to be bigger than the problem it's solving.",
   intro:
-    "A lot of AI today defaults to the biggest, most power-hungry option available, whether or not the problem actually needs it. I build differently: starting simple, using efficient and energy-conscious tools whenever they'll do the job well, and only bringing in bigger AI when it truly earns its place.",
+    "A lot of AI today defaults to the biggest, most powerful option available, whether or not the moment actually calls for it. I build differently. I start simple, reach for efficient and energy-conscious tools whenever they'll genuinely do the job, and bring in something bigger and more powerful exactly when it earns its place — never just because it's available. To me, that's not a limitation. It's care.",
 };
 
 export type PhilosophyValue = {
@@ -24,25 +24,25 @@ export const values: PhilosophyValue[] = [
     number: "01",
     title: "Start simple",
     description:
-      "If a problem can be solved with straightforward, well-tested technology, that's where I start — before reaching for AI at all. Simple solutions are easier to trust, cheaper to run, and less likely to break.",
+      "If a problem can be solved with straightforward, well-tested technology, that's where I start — before reaching for AI at all. Simple solutions are honest ones: easier to trust, cheaper to run, and far less likely to let you down.",
   },
   {
     number: "02",
     title: "Right-sized, not oversized",
     description:
-      "Not every task needs a massive AI model. Smaller, efficient tools are often faster, cheaper, more private, and kinder to the environment — and they usually work just as well for the job at hand.",
+      "Not every task needs a massive AI model, and not every task should avoid one, either. I try to match the size of the tool to the size of the problem — sometimes that's something small and efficient, and sometimes it's genuinely a large, powerful model. What matters to me is that it's a decision, not a default.",
   },
   {
     number: "03",
     title: "AI where it earns its place",
     description:
-      "AI is genuinely powerful, but it isn't the answer to everything. I bring it in only where it adds real value — not because it's trendy, and not by default.",
+      "AI is genuinely powerful, and used well, it can do real good. I bring it in where it earns its place — never just because it's trendy, and never just because it's available.",
   },
   {
     number: "04",
     title: "Built to work together",
     description:
-      "Good systems are usually a team effort between several efficient, focused tools rather than one giant system trying to do everything at once. Each piece does what it's actually good at.",
+      "Good systems are usually a team effort between several efficient, focused tools rather than one giant system trying to do everything at once. I like building that way — it feels more like craftsmanship than assembly.",
   },
 ];
 
@@ -50,14 +50,14 @@ export const edgeComputing = {
   title: "Why I care about edge computing",
   paragraphs: [
     "Most AI today runs far away, in enormous data centers, even for small everyday tasks. \"Edge computing\" simply means running technology closer to home — on your own device, or on nearby hardware — instead of always shipping everything off to a distant server.",
-    "When it's possible, I like to build things this way. It usually means faster results, better privacy since your information doesn't have to travel as far, and a much smaller environmental footprint.",
+    "When it's possible, I like to build things this way. It usually means faster results for you, better privacy since your information doesn't have to travel as far, and a lighter footprint on the planet we all share. That last part matters to me more than I can really fit into a sales pitch.",
   ],
 };
 
 export const whyItMatters = {
   title: "Why energy-efficient AI matters",
   intro:
-    "None of this comes from a belief that smaller or simpler is always better — it isn't, every time. It comes from treating energy and computing power as things worth respecting, not something to spend without a second thought.",
+    "None of this comes from a belief that smaller or simpler is always better — it isn't, every time, and I've built plenty of things that genuinely needed real power to work at all. It comes from treating energy and computing power as things worth respecting, and using exactly what a task deserves — no more, and no less.",
   benefits: [
     "Uses less electricity",
     "Costs less to run over time",
@@ -66,7 +66,7 @@ export const whyItMatters = {
     "Easier to maintain and trust",
     "Less reliant on giant, centralized infrastructure",
   ],
-  principle: "The best solution is the simplest one that does the job well — nothing more, nothing less.",
+  principle: "The right solution is the one that actually fits the job — nothing more than it needs, and nothing less than it deserves.",
 };
 
 export type CapabilityTag = "Runs on your device" | "Small & efficient" | "No cloud AI needed" | "Human + AI teamwork";
@@ -141,4 +141,4 @@ export const projectConnections: ProjectConnection[] = [
 ];
 
 export const closingStatement =
-  "This isn't a marketing angle — it's genuinely how I approach every project I take on: work efficiently, respect the planet's resources, and never use more technology than a problem actually needs.";
+  "This isn't a marketing angle. It's genuinely how I show up for every project I take on — building with intention, respecting the resources this all runs on, and never using more than a problem actually needs. It might sound like a small thing. It doesn't feel small to me.";
