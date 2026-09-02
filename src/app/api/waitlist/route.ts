@@ -12,7 +12,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { data, error } = await supabaseServer
+    const { data, error } = await supabaseServer()
       .from("waitlist_subscribers")
       .insert({
         email,

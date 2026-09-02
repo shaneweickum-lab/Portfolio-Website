@@ -14,15 +14,16 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    const client = supabaseServer();
     const [waitlistCount, customerCount, communicationCount] = await Promise.all(
       [
-        supabaseServer
+        client
           .from("waitlist_subscribers")
           .select("id", { count: "exact", head: true }),
-        supabaseServer
+        client
           .from("customers")
           .select("id", { count: "exact", head: true }),
-        supabaseServer
+        client
           .from("communications")
           .select("id", { count: "exact", head: true }),
       ]

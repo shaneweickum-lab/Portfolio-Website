@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const { data: customers, error } = await supabaseServer
+    const { data: customers, error } = await supabaseServer()
       .from("customers")
       .select("*")
       .order("created_at", { ascending: false });
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { data: customer, error } = await supabaseServer
+    const { data: customer, error } = await supabaseServer()
       .from("customers")
       .insert({
         email,

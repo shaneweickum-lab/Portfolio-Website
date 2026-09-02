@@ -14,7 +14,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { data: admin, error } = await supabaseServer
+    const { data: admin, error } = await supabaseServer()
       .from("admin_users")
       .select("*")
       .eq("email", email)
